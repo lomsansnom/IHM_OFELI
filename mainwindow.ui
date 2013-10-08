@@ -25,10 +25,22 @@
    </property>
    <widget class="QMenu" name="menuIHM_OFELI">
     <property name="title">
-     <string>IHM_OFELI</string>
+     <string>Fichier</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuEdition">
+    <property name="title">
+     <string>Edition</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuAide">
+    <property name="title">
+     <string>Aide</string>
     </property>
    </widget>
    <addaction name="menuIHM_OFELI"/>
+   <addaction name="menuEdition"/>
+   <addaction name="menuAide"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
