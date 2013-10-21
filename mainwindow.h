@@ -14,8 +14,6 @@
 #include <QtXml>
 #include <QTreeView>
 
-#include "qtreeviewofeli.h"
-
 namespace Ui {
 class MainWindow;
 }
