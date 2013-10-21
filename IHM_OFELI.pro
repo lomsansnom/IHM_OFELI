@@ -15,10 +15,8 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-    qtreeviewofeli.cpp
+        mainwindow.cpp
 
-HEADERS  += mainwindow.h \
-    qtreeviewofeli.h
+HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
