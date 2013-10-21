@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <iostream>
+
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -8,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->ui->verticalLayout->setMargin(20);
 }
 
 MainWindow::~MainWindow()
@@ -34,7 +36,16 @@ int MainWindow::openDatas(QString filename)
     QDomElement elem = doc->documentElement();
     QDomNode noeud = elem.firstChild();
 
-    int i = 0;
+    /*cout << elem.tagName().toStdString() << endl;
+    model->appendRow(new QStandardItem(elem.tagName()));
+    buildTree(noeud, model);*/
+
+    cout << elem.firstChild().nextSibling().firstChild().nextSibling().toAttr().value().toStdString() << endl;
+    cout << elem.firstChild().toAttr().name().toStdString() << endl;
+    //cout << elem.firstChild().nextSibling().nodeValue().toStdString() << endl;
+    cout << elem.firstChild().nextSibling().firstChild().nextSibling().attributes().item(0).toAttr().value().toStdString() << endl;
+    cout << elem.firstChild().nextSibling().firstChild().nextSibling().attributes().item(0).toAttr().name().toStdString() << endl;
+
     while(!elem.isNull())
     {
         tagList.append(new QStandardItem(elem.tagName()));
@@ -53,71 +64,76 @@ int MainWindow::openDatas(QString filename)
         }
         elem = elem.nextSiblingElement();
         noeud = elem.firstChild();
-        i++;
     }
-    cout << "length : " << subSubTagList.length() << " => " << subSubTagList[1][2]->text().toStdString() << endl;
+
+    //add all tags to the tree as rows
     model->appendRow(tagList);
     for(int i = 0; i < tagList.length(); i++)
     {
-        for(int ii = 0; ii < subTagList.length(); ii++)
-        {
-            tagList[i]->appendRow(subTagList[ii]);
-        }
+        tagList[i]->appendRows(subTagList);
     }
     for(int i = 0; i < subTagList.length(); i++)
     {
-        for(int ii = 0; ii < subSubTagList[i].length(); ii++)
-        {
-            subTagList[i]->appendRow(subSubTagList[i][ii]);
-        }
+        subTagList[i]->appendRows(subSubTagList[i]);
     }
 
     this->ui->treeView->setModel(model);
-    QObject::connect(this->ui->treeView->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), this, SLOT(showDetails(QModelIndex)));
+    QObject::connect(this->ui->treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(showDetails(QModelIndex)));
+
     return 0;
 }
 
+/*void MainWindow::buildTree(QDomNode doc, QStandardItemModel* model)
+{
+    if(!doc.isNull())
+    {
+        if(doc.toElement().tagName() != QString(""))
+        {
+            model->appendRow(new QStandardItem(doc.toElement().tagName()));
+        }
+        buildTree(doc.firstChild(), model);
+        buildTree(doc.nextSibling(), model);
+    }
+}*/
+
 //Slots
-//Works for a document with 3 level(or less)
 void MainWindow::showDetails(QModelIndex index)
 {
-    //if the selection is the root(the first level)
-    if(index.parent().column() == -1 && index.parent().row() == -1)
+    QString nodeName = this->ui->treeView->model()->data(index).toString();
+    QDomNamedNodeMap listAttr = currentDocument->elementsByTagName(nodeName).item(0).attributes();
+
+    if(!list.empty())
     {
-        this->ui->verticalLayout_2->addWidget(new QPushButton(this->currentDocument->documentElement().toElement().tagName()));
+        for(int i = 0; i < list.length(); i++)
+        {
+            delete list[i];
+        }
+        list.clear();
     }
-    //else if the selection is in the second level
-    else if(index.parent().column() == 0 && index.parent().parent().column() == -1)
+
+    QHBoxLayout *horizontalLayout = new QHBoxLayout();
+    if(!currentDocument->elementsByTagName(nodeName).item(0).childNodes().item(0).isElement() && currentDocument->elementsByTagName(nodeName).item(0).hasChildNodes())
     {
-        QDomNode noeud = this->currentDocument->documentElement().firstChild();
-        int i = index.row();
-        //go to the next row while this is not the good row
-        while(i != 0)
-        {
-            noeud = noeud.nextSibling();
-            i--;
-        }
-        this->ui->verticalLayout_2->addWidget(new QPushButton(noeud.toElement().tagName()));
+        list.push_front(new QLineEdit(currentDocument->elementsByTagName(nodeName).item(0).toElement().text()));
+        list.push_front(new QLabel(QString("Value")));
+        horizontalLayout->addWidget(list[0]);
+        horizontalLayout->addWidget(list[1]);
+        this->ui->verticalLayout->addLayout(horizontalLayout);
     }
-    //else if the selection is in the third level
-    else if(index.parent().column() == 0 && index.parent().parent().column() == 0)
+
+    for(int i = 0; i < listAttr.length(); i++)
     {
-        QDomNode noeud = this->currentDocument->documentElement().firstChild();
-        int i = index.parent().row();
-        //go to the next row while this is not the good row(in the second level)
-        while(i != 0)
-        {
-            noeud = noeud.nextSiblingElement();
-            i--;
-        }
-        noeud = noeud.firstChild();
-        i = index.row();
-        //go to the next row while this is not the good row(in the third level)
-        while(i != 0)
-        {
-            noeud = noeud.nextSibling();
-            i--;
-        }
-        this->ui->verticalLayout_2->addWidget(new QPushButton(noeud.toElement().tagName()));
+        QHBoxLayout *horizontalLayout = new QHBoxLayout();
+        list.push_front(new QLineEdit(listAttr.item(i).toAttr().value()));
+        list.push_front(new QLabel(listAttr.item(i).toAttr().name()));
+        horizontalLayout->addWidget(list[0]);
+        horizontalLayout->addWidget(list[1]);
+        this->ui->verticalLayout->addLayout(horizontalLayout);
+        this->ui->verticalLayout->setAlignment(horizontalLayout, Qt::AlignTop);
+    }
+
+    if(listAttr.isEmpty() && !currentDocument->elementsByTagName(nodeName).item(0).childNodes().item(0).isElement())
+    {
+        this->ui->verticalLayout->setAlignment(horizontalLayout, Qt::AlignTop);
     }
 }

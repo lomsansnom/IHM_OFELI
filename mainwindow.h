@@ -7,7 +7,14 @@
 #include <QList>
 #include <QFile>
 #include <QTextStream>
+#include <QPushButton>
+#include <QLineEdit>
+#include <QLabel>
+#include <QHBoxLayout>
 #include <QtXml>
+#include <QTreeView>
+
+#include "qtreeviewofeli.h"
 
 namespace Ui {
 class MainWindow;
@@ -21,6 +28,7 @@ class MainWindow : public QMainWindow
         explicit MainWindow(QWidget *parent = 0);
         ~MainWindow();
         int openDatas(QString fileName);
+        //void buildTree(QDomNode doc, QStandardItemModel* model);
 
     public slots:
         void showDetails(QModelIndex index);
@@ -28,6 +36,7 @@ class MainWindow : public QMainWindow
     private:
         Ui::MainWindow *ui;
         QDomDocument *currentDocument;
+        QList<QWidget*> list;
 };
 
 #endif // MAINWINDOW_H
