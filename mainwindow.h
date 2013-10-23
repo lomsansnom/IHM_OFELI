@@ -1,11 +1,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <stdio.h>
 #include <QMainWindow>
 #include <QString>
 #include <QStandardItemModel>
 #include <QList>
 #include <QFile>
+#include <QFileDialog>
 #include <QTextStream>
 #include <QPushButton>
 #include <QLineEdit>
@@ -29,11 +31,15 @@ class MainWindow : public QMainWindow
         //void buildTree(QDomNode doc, QStandardItemModel* model);
 
     public slots:
+        void selectFile();
         void showDetails(QModelIndex index);
+        void saveFile();
 
     private:
         Ui::MainWindow *ui;
+        QStringList filename;
         QDomDocument *currentDocument;
+        QStandardItemModel *model;
         QList<QWidget*> list;
 };
 

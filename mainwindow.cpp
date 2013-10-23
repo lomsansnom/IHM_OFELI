@@ -10,6 +10,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->ui->verticalLayout->setMargin(20);
+    QObject::connect(this->ui->actionOpen, SIGNAL(triggered()), this, SLOT(selectFile()));
+    QObject::connect(this->ui->actionSave_File, SIGNAL(triggered()), this, SLOT(saveFile()));
+    QObject::connect(this->ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
 }
 
 MainWindow::~MainWindow()
@@ -36,15 +39,11 @@ int MainWindow::openDatas(QString filename)
     QDomElement elem = doc->documentElement();
     QDomNode noeud = elem.firstChild();
 
+
     /*cout << elem.tagName().toStdString() << endl;
     model->appendRow(new QStandardItem(elem.tagName()));
     buildTree(noeud, model);*/
 
-    cout << elem.firstChild().nextSibling().firstChild().nextSibling().toAttr().value().toStdString() << endl;
-    cout << elem.firstChild().toAttr().name().toStdString() << endl;
-    //cout << elem.firstChild().nextSibling().nodeValue().toStdString() << endl;
-    cout << elem.firstChild().nextSibling().firstChild().nextSibling().attributes().item(0).toAttr().value().toStdString() << endl;
-    cout << elem.firstChild().nextSibling().firstChild().nextSibling().attributes().item(0).toAttr().name().toStdString() << endl;
 
     while(!elem.isNull())
     {
@@ -76,7 +75,7 @@ int MainWindow::openDatas(QString filename)
     {
         subTagList[i]->appendRows(subSubTagList[i]);
     }
-
+    this->model = model;
     this->ui->treeView->setModel(model);
     QObject::connect(this->ui->treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(showDetails(QModelIndex)));
 
@@ -97,10 +96,31 @@ int MainWindow::openDatas(QString filename)
 }*/
 
 //Slots
+
+void MainWindow::selectFile()
+{
+    QFileDialog *openWindow = new QFileDialog(this);
+
+    openWindow->setFileMode(QFileDialog::ExistingFiles);
+    openWindow->show();
+
+    if(openWindow->exec())
+    {
+        filename = openWindow->selectedFiles();
+        cout << "ok" << endl;
+        if(!filename.isEmpty())
+        {
+            openDatas(filename[0]);
+        }
+    }
+}
+
 void MainWindow::showDetails(QModelIndex index)
 {
     QString nodeName = this->ui->treeView->model()->data(index).toString();
     QDomNamedNodeMap listAttr = currentDocument->elementsByTagName(nodeName).item(0).attributes();
+
+    this->ui->label->setText(QString("Edit ") + nodeName);
 
     if(!list.empty())
     {
@@ -112,8 +132,10 @@ void MainWindow::showDetails(QModelIndex index)
     }
 
     QHBoxLayout *horizontalLayout = new QHBoxLayout();
+
     if(!currentDocument->elementsByTagName(nodeName).item(0).childNodes().item(0).isElement() && currentDocument->elementsByTagName(nodeName).item(0).hasChildNodes())
     {
+        horizontalLayout = new QHBoxLayout();
         list.push_front(new QLineEdit(currentDocument->elementsByTagName(nodeName).item(0).toElement().text()));
         list.push_front(new QLabel(QString("Value")));
         horizontalLayout->addWidget(list[0]);
@@ -123,7 +145,7 @@ void MainWindow::showDetails(QModelIndex index)
 
     for(int i = 0; i < listAttr.length(); i++)
     {
-        QHBoxLayout *horizontalLayout = new QHBoxLayout();
+        horizontalLayout = new QHBoxLayout();
         list.push_front(new QLineEdit(listAttr.item(i).toAttr().value()));
         list.push_front(new QLabel(listAttr.item(i).toAttr().name()));
         horizontalLayout->addWidget(list[0]);
@@ -134,6 +156,37 @@ void MainWindow::showDetails(QModelIndex index)
 
     if(listAttr.isEmpty() && !currentDocument->elementsByTagName(nodeName).item(0).childNodes().item(0).isElement())
     {
-        this->ui->verticalLayout->setAlignment(horizontalLayout, Qt::AlignTop);
+       this->ui->verticalLayout->setAlignment(horizontalLayout, Qt::AlignTop);
     }
+}
+
+void MainWindow::saveFile()
+{
+    QFileDialog *saveWindow = new QFileDialog(this);
+    FILE *saveFile;
+    QTextStream *fileStream;
+    QByteArray filenameFopen;
+
+    saveWindow->setAcceptMode(QFileDialog::AcceptSave);
+    saveWindow->setFileMode(QFileDialog::AnyFile);
+    saveWindow->show();
+
+    if(saveWindow->exec())
+    {
+        //convert Qstring to char* for the fopen function
+        filenameFopen = saveWindow->selectedFiles()[0].toLocal8Bit();
+        saveFile = fopen(filenameFopen.data(), "w");
+
+        if(saveFile == NULL)
+        {
+            cout << "Erreur" << endl;
+        }
+        else
+        {
+            fileStream = new QTextStream(saveFile,QIODevice::ReadWrite);
+            currentDocument->save(*fileStream, 4);
+            fclose(saveFile);
+        }
+    }
+
 }
