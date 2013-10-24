@@ -28,12 +28,13 @@ class MainWindow : public QMainWindow
         explicit MainWindow(QWidget *parent = 0);
         ~MainWindow();
         int openDatas(QString fileName);
-        //void buildTree(QDomNode doc, QStandardItemModel* model);
+        void buildTree(QDomNode doc, QStandardItemModel* model, int rowParent);
 
     public slots:
         void selectFile();
         void showDetails(QModelIndex index);
         void saveFile();
+        void executable();
 
     private:
         Ui::MainWindow *ui;

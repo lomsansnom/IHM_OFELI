@@ -15,8 +15,15 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    dialogexec.cpp \
+    results.cpp
 
 HEADERS  += mainwindow.h\
-        ui_mainwindow.h
-FORMS    += mainwindow.ui
+        ui_mainwindow.h \
+    dialogexec.h \
+    ui_dialogexec.h \
+    results.h
+FORMS    += mainwindow.ui \
+    dialogexec.ui \
+    results.ui

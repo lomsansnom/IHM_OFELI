@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "dialogexec.h"
 #include "ui_mainwindow.h"
 #include <iostream>
 
@@ -13,6 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(this->ui->actionOpen, SIGNAL(triggered()), this, SLOT(selectFile()));
     QObject::connect(this->ui->actionSave_File, SIGNAL(triggered()), this, SLOT(saveFile()));
     QObject::connect(this->ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
+    QObject::connect(this->ui->buttonSave, SIGNAL(clicked()), this, SLOT(saveFile()));
+    QObject::connect(this->ui->buttonExec, SIGNAL(clicked()), this, SLOT(executable()));
 }
 
 MainWindow::~MainWindow()
@@ -40,9 +43,9 @@ int MainWindow::openDatas(QString filename)
     QDomNode noeud = elem.firstChild();
 
 
-    /*cout << elem.tagName().toStdString() << endl;
-    model->appendRow(new QStandardItem(elem.tagName()));
-    buildTree(noeud, model);*/
+    //cout << elem.tagName().toStdString() << endl;
+   /* model->appendRow(new QStandardItem(elem.tagName()));
+    buildTree(noeud, model, 0);*/
 
 
     while(!elem.isNull())
@@ -82,16 +85,27 @@ int MainWindow::openDatas(QString filename)
     return 0;
 }
 
-/*void MainWindow::buildTree(QDomNode doc, QStandardItemModel* model)
+/*void MainWindow::buildTree(QDomNode doc, QStandardItemModel* model, int rowParent)
 {
     if(!doc.isNull())
     {
         if(doc.toElement().tagName() != QString(""))
         {
-            model->appendRow(new QStandardItem(doc.toElement().tagName()));
+            if(rowParent == 0)
+            {
+                model->appendRow(new QStandardItem(doc.toElement().tagName()));
+            }
+            else
+            {
+                model->item(rowParent)->appendRow(new QStandardItem(doc.toElement().tagName()));
+            }
+            if(doc.childNodes().count() > 0)
+            {
+                rowParent =
+            }
         }
-        buildTree(doc.firstChild(), model);
-        buildTree(doc.nextSibling(), model);
+        buildTree(doc.firstChild(), model, rowParent);
+        buildTree(doc.nextSibling(), model, rowParent);
     }
 }*/
 
@@ -189,4 +203,10 @@ void MainWindow::saveFile()
         }
     }
 
+}
+
+void MainWindow::executable()
+{
+    DialogExec *windowExec = new DialogExec(this);
+    windowExec->show();
 }
