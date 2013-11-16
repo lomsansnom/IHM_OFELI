@@ -29,6 +29,7 @@ class MainWindow : public QMainWindow
         ~MainWindow();
         int openDatas(QString fileName);
         void buildTree(QDomNode doc, QStandardItemModel* model, QStandardItem *item, QList<int> *nbChildren, int childNumber, QList<int> *currentChild, int currentLevel);
+        void buildTreeColumn(QStandardItem *item);
 
     public slots:
         void selectFile();

@@ -40,16 +40,17 @@ int MainWindow::openDatas(QString filename)
 
     QFile fichier(filename);
     QDomDocument *doc = new QDomDocument("docXml");
+    QDomElement elem;
+    QList<int> *currentChild = new QList<int>();
+    QList<int> *nodesLength = new QList<int>();
 
     fichier.open(QIODevice::ReadOnly | QIODevice::Text);
     doc->setContent(&fichier);
     this->currentDocument = doc;
     fichier.close();
 
-    QDomElement elem = doc->documentElement();
+    elem = doc->documentElement();
 
-    QList<int> *currentChild = new QList<int>();
-    QList<int> *nodesLength = new QList<int>();
     for(int i = 0; i < 10; i++)
     {
         currentChild->append(0);
@@ -74,7 +75,10 @@ void MainWindow::buildTree(QDomNode doc, QStandardItemModel* model, QStandardIte
         //append root to model
         if(currentLevel == -1)
         {
-            model->appendRow(item);
+            QList<QStandardItem*> list;
+            list.append(item);
+            list.append(new QStandardItem(""));
+            model->appendRow(list);
         }
         //append everything but root to model
         else
@@ -85,7 +89,32 @@ void MainWindow::buildTree(QDomNode doc, QStandardItemModel* model, QStandardIte
                 itemUpdated = itemUpdated->child(currentChild->at(i));
             }
             //append the node
-            itemUpdated->appendRow(new QStandardItem(doc.toElement().tagName()));
+            QList<QStandardItem*> list;
+            cout << doc.attributes().length() << endl;
+            if(doc.attributes().length()+2 > model->columnCount())
+            {
+                for(int i = 0; i <= doc.attributes().length()-model->columnCount(); i++)
+                {
+                    list.append(new QStandardItem(""));
+                }
+                model->appendColumn(list);
+                list.clear();
+            }
+
+            list.append(new QStandardItem(doc.toElement().tagName()));
+            if(!doc.childNodes().item(0).isElement() && doc.hasChildNodes())
+            {
+                list.append(new QStandardItem(doc.toElement().text()));
+            }
+            else
+            {
+                list.append(new QStandardItem(""));
+            }
+            for(int i = 0; i < doc.attributes().length(); i++)
+            {
+                list.append(new QStandardItem(doc.attributes().item(i).toAttr().name() + " : " + doc.attributes().item(i).toAttr().value()));
+            }
+            itemUpdated->appendRow(list);
         }
         //if the node has at least one child get all the children and add them to the model
         if(!doc.childNodes().isEmpty() && doc.firstChild().toElement().tagName() != "")
@@ -123,6 +152,13 @@ void MainWindow::buildTree(QDomNode doc, QStandardItemModel* model, QStandardIte
             }
         }
     }
+}
+
+void MainWindow::buildTreeColumn(QStandardItem *item)
+{
+    QList<QStandardItem*> list;
+    list.append(new QStandardItem("test"));
+    item->appendColumn(list);
 }
 
 //Slots
