@@ -2,6 +2,7 @@
 #include "dialogexec.h"
 #include "ui_mainwindow.h"
 #include <iostream>
+#include <QComboBox>
 
 using namespace std;
 
@@ -10,12 +11,22 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->ui->verticalLayout->setMargin(20);
+
+    tagList = new QStringList();
+    tagList->append("value");
+    tagList->append("name");
+
+    this->ui->formLayout->setMargin(20);
+    this->ui->buttonAddParam->hide();
+    this->ui->buttonValidate->hide();
+    //openDatas("default.dat");
     QObject::connect(this->ui->actionOpen, SIGNAL(triggered()), this, SLOT(selectFile()));
     QObject::connect(this->ui->actionSave_File, SIGNAL(triggered()), this, SLOT(saveFile()));
     QObject::connect(this->ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     QObject::connect(this->ui->buttonSave, SIGNAL(clicked()), this, SLOT(saveFile()));
     QObject::connect(this->ui->buttonExec, SIGNAL(clicked()), this, SLOT(executable()));
+    QObject::connect(this->ui->buttonAddParam, SIGNAL(clicked()), this, SLOT(addParam()));
+    QObject::connect(this->ui->buttonValidate, SIGNAL(clicked()), this, SLOT(validate()));
 }
 
 MainWindow::~MainWindow()
@@ -27,112 +38,122 @@ int MainWindow::openDatas(QString filename)
 {
     QStandardItemModel *model = new QStandardItemModel;
 
-    QList<QStandardItem*> tagList;
-    QList<QStandardItem*> subTagList;
-    QList< QList<QStandardItem*> > subSubTagList;
-    QList<QStandardItem*> list;
-
     QFile fichier(filename);
     fichier.open(QIODevice::ReadOnly | QIODevice::Text);
-    QTextStream flux(&fichier);
     QDomDocument *doc = new QDomDocument("docXml");
+    QDomElement elem = doc->documentElement();
+    QList<int> *currentChild = new QList<int>();
+    QList<int> *nodesLength = new QList<int>();
+
     doc->setContent(&fichier);
     this->currentDocument = doc;
     fichier.close();
-    QDomElement elem = doc->documentElement();
-    QDomNode noeud = elem.firstChild();
 
-
-    //cout << elem.tagName().toStdString() << endl;
-   /* model->appendRow(new QStandardItem(elem.tagName()));
-    buildTree(noeud, model, 0);*/
-
-
-    while(!elem.isNull())
+    for(int i = 0; i < 10; i++)
     {
-        tagList.append(new QStandardItem(elem.tagName()));
-        while(!noeud.isNull())
-        {
-            subTagList.append(new QStandardItem(noeud.toElement().tagName()));
-            QDomNode noeudd = noeud.firstChild();
-            list.clear();
-            while(!noeudd.isNull())
-            {
-                list.append(new QStandardItem(noeudd.toElement().tagName())); //+ " : " + noeudd.toElement().text();
-                noeudd = noeudd.nextSibling();
-            }
-            subSubTagList.append(list);
-            noeud = noeud.nextSibling();
-        }
-        elem = elem.nextSiblingElement();
-        noeud = elem.firstChild();
+        currentChild->append(0);
+        nodesLength->append(0);
     }
 
-    //add all tags to the tree as rows
-    model->appendRow(tagList);
-    for(int i = 0; i < tagList.length(); i++)
-    {
-        tagList[i]->appendRows(subTagList);
-    }
-    for(int i = 0; i < subTagList.length(); i++)
-    {
-        subTagList[i]->appendRows(subSubTagList[i]);
-    }
+    buildTree(elem, model, new QStandardItem(elem.tagName()), nodesLength, 0, currentChild, -1);
+
     this->model = model;
     this->ui->treeView->setModel(model);
-    QObject::connect(this->ui->treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(showDetails(QModelIndex)));
 
+    QObject::connect(this->ui->treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(showDetails(QModelIndex)));
     return 0;
 }
 
-/*void MainWindow::buildTree(QDomNode doc, QStandardItemModel* model, int rowParent)
+void MainWindow::buildTree(QDomNode doc, QStandardItemModel* model, QStandardItem *item, QList<int> *nbChildren, int childNumber, QList<int> *currentChild, int currentLevel)
 {
+    //check if doc is not empty
     if(!doc.isNull())
     {
-        if(doc.toElement().tagName() != QString(""))
+        QStandardItem *itemUpdated = item;
+        //append root to model
+        if(currentLevel == -1)
         {
-            if(rowParent == 0)
+            model->appendRow(item);
+        }
+        //append everything but root to model
+        else
+        {
+            //get the parent to the node we want to add to the model
+            for(int i = 0; i < currentLevel; i++)
             {
-                model->appendRow(new QStandardItem(doc.toElement().tagName()));
+                itemUpdated = itemUpdated->child(currentChild->at(i));
             }
-            else
+            //append the node
+            itemUpdated->appendRow(new QStandardItem(doc.toElement().tagName()));
+        }
+        //if the node has at least one child get all the children and add them to the model
+        if(!doc.childNodes().isEmpty() && doc.firstChild().toElement().tagName() != "")
+        {
+            //get the children
+            QDomNodeList nodeList = doc.childNodes();
+            //update the level and store the number of children
+            currentLevel++;
+            (*nbChildren)[currentLevel] = nodeList.length();
+
+            //for each child add the chils and its children to the model
+            for(int i = 0; i < (*nbChildren)[currentLevel]; i++)
             {
-                model->item(rowParent)->appendRow(new QStandardItem(doc.toElement().tagName()));
-            }
-            if(doc.childNodes().count() > 0)
-            {
-                rowParent =
+                (*currentChild)[currentLevel] = i;
+                buildTree(nodeList.at(i), model, item, nbChildren, i, currentChild, currentLevel);
             }
         }
-        buildTree(doc.firstChild(), model, rowParent);
-        buildTree(doc.nextSibling(), model, rowParent);
+        //if the current node doesn't have children the previous level need to be updated
+        else
+        {
+            //the level which must be updated is the first one which is not equal to the
+            //number of children of its level (if we start by the last level scanned)
+            int ii = 1;
+            if(currentLevel >= 1 && childNumber == (*nbChildren)[currentLevel] - 1)
+            {
+                while((*currentChild)[currentLevel-ii] == (*nbChildren)[currentLevel-ii] && ii <= currentLevel)
+                {
+                    ii++;
+                }
+                //if currentLevel-ii is < 0, it means that all the children of the previous levels have been scanned
+                if(ii <= currentLevel)
+                {
+                    (*currentChild)[currentLevel-ii] += 1;
+                }
+            }
+        }
     }
-}*/
+}
 
 //Slots
 
 void MainWindow::selectFile()
 {
     QFileDialog *openWindow = new QFileDialog(this);
+    QStringList filenameList;
 
     openWindow->setFileMode(QFileDialog::ExistingFiles);
     openWindow->show();
 
     if(openWindow->exec())
     {
-        filename = openWindow->selectedFiles();
+        filenameList = openWindow->selectedFiles();
         cout << "ok" << endl;
-        if(!filename.isEmpty())
+        if(!filenameList.isEmpty())
         {
-            openDatas(filename[0]);
+            filename = filenameList[0];
+            openDatas(filename);
         }
     }
 }
 
 void MainWindow::showDetails(QModelIndex index)
 {
-    QString nodeName = this->ui->treeView->model()->data(index).toString();
     QDomNamedNodeMap listAttr = currentDocument->elementsByTagName(nodeName).item(0).attributes();
+
+    nodeName = this->ui->treeView->model()->data(index).toString();
+
+    this->ui->buttonAddParam->show();
+    this->ui->buttonValidate->show();
 
     this->ui->label->setText(QString("Edit ") + nodeName);
 
@@ -150,27 +171,55 @@ void MainWindow::showDetails(QModelIndex index)
     if(!currentDocument->elementsByTagName(nodeName).item(0).childNodes().item(0).isElement() && currentDocument->elementsByTagName(nodeName).item(0).hasChildNodes())
     {
         horizontalLayout = new QHBoxLayout();
+        QComboBox *comboBoxTag = new QComboBox();
+        comboBoxTag->addItem("Value");
+        comboBoxTag->setDisabled(true);
         list.push_front(new QLineEdit(currentDocument->elementsByTagName(nodeName).item(0).toElement().text()));
-        list.push_front(new QLabel(QString("Value")));
+        //list.push_front(new QLabel(QString("Value")));
+        list.push_front(comboBoxTag);
         horizontalLayout->addWidget(list[0]);
         horizontalLayout->addWidget(list[1]);
-        this->ui->verticalLayout->addLayout(horizontalLayout);
+        this->ui->formLayout->addRow(horizontalLayout);
     }
 
+    QComboBox *comboBox;
     for(int i = 0; i < listAttr.length(); i++)
     {
+        comboBox = new QComboBox();
+        comboBox->addItems(*tagList);
+        comboBox->setCurrentText(listAttr.item(i).toAttr().name());
         horizontalLayout = new QHBoxLayout();
         list.push_front(new QLineEdit(listAttr.item(i).toAttr().value()));
-        list.push_front(new QLabel(listAttr.item(i).toAttr().name()));
+      //  list.push_front(new QLabel(listAttr.item(i).toAttr().name()));
+        list.push_front(comboBox);
         horizontalLayout->addWidget(list[0]);
         horizontalLayout->addWidget(list[1]);
-        this->ui->verticalLayout->addLayout(horizontalLayout);
-        this->ui->verticalLayout->setAlignment(horizontalLayout, Qt::AlignTop);
+        this->ui->formLayout->addRow(horizontalLayout);
     }
+}
 
-    if(listAttr.isEmpty() && !currentDocument->elementsByTagName(nodeName).item(0).childNodes().item(0).isElement())
+void MainWindow::addParam()
+{
+    QHBoxLayout *horizontalLayout = new QHBoxLayout();
+
+    list.push_front(new QLineEdit("Value"));
+    list.push_front(new QLineEdit("Name")); //to replace by a dropdown list containing all possibles values
+    horizontalLayout->addWidget(list[0]);
+    horizontalLayout->addWidget(list[1]);
+    this->ui->formLayout->addRow(horizontalLayout);
+}
+
+void MainWindow::validate()
+{
+    QString attrName, attrValue;
+    //cout << list.length() << endl;
+    for(int i = 0; i < list.length(); i += 2)
     {
-       this->ui->verticalLayout->setAlignment(horizontalLayout, Qt::AlignTop);
+        attrName = ((QComboBox*)list[i])->currentText();
+        attrValue = ((QLineEdit*)list[i+1])->text();
+        cout << "ook" << endl;
+        currentDocument->elementsByTagName(nodeName).item(0).toElement().setAttribute(attrName, attrValue);
+        cout << "bug" << endl;
     }
 }
 
@@ -207,6 +256,6 @@ void MainWindow::saveFile()
 
 void MainWindow::executable()
 {
-    DialogExec *windowExec = new DialogExec(this);
+    DialogExec *windowExec = new DialogExec(this, filename);
     windowExec->show();
 }

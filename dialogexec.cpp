@@ -1,16 +1,20 @@
 #include "dialogexec.h"
 #include "ui_dialogexec.h"
-#include "results.h"
+#include "dialogresults.h"
 
 #include <iostream>
 using namespace std;
 
-DialogExec::DialogExec(QWidget *parent) :
+DialogExec::DialogExec(QWidget *parent, QString filenameDat) :
     QDialog(parent),
     ui(new Ui::DialogExec)
 {
     ui->setupUi(this);
     this->parent = parent;
+
+    this->ui->pathDat->setText(filenameDat);
+    this->ui->pathExec->setText(filenameDat.left(filenameDat.lastIndexOf("/")));
+    this->ui->nameExec->setText(this->ui->pathExec->text().mid(this->ui->pathExec->text().lastIndexOf("/")+1));
 
     QObject::connect(this->ui->buttonCancel, SIGNAL(clicked()), this, SLOT(close()));
     QObject::connect(this->ui->buttonBrowse, SIGNAL(clicked()), this, SLOT(selectExec()));
@@ -57,7 +61,7 @@ void DialogExec::execute()
     QString p_stdout = proc->readAll();
     proc->close();
     cout << p_stdout.toStdString() << endl;
-    Results *resWindow = new Results(parent, p_stdout);
+    DialogResults *resWindow = new DialogResults(parent, p_stdout);
     resWindow->show();
     resWindow->closeExec(this);
 }

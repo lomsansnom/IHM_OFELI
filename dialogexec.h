@@ -14,7 +14,7 @@ class DialogExec : public QDialog
     Q_OBJECT
 
     public:
-        explicit DialogExec(QWidget *parent = 0);
+    explicit DialogExec(QWidget *parent = 0, QString filenameDat = "");
         ~DialogExec();
 
     public slots:

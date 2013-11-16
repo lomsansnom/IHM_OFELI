@@ -28,17 +28,21 @@ class MainWindow : public QMainWindow
         explicit MainWindow(QWidget *parent = 0);
         ~MainWindow();
         int openDatas(QString fileName);
-        void buildTree(QDomNode doc, QStandardItemModel* model, int rowParent);
+        void buildTree(QDomNode doc, QStandardItemModel* model, QStandardItem *item, QList<int> *nbChildren, int childNumber, QList<int> *currentChild, int currentLevel);
 
     public slots:
         void selectFile();
         void showDetails(QModelIndex index);
         void saveFile();
         void executable();
+        void addParam();
+        void validate();
 
     private:
         Ui::MainWindow *ui;
-        QStringList filename;
+        QString filename;
+        QString nodeName;
+        QStringList* tagList;
         QDomDocument *currentDocument;
         QStandardItemModel *model;
         QList<QWidget*> list;
