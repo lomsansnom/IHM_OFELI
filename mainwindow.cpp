@@ -39,16 +39,17 @@ int MainWindow::openDatas(QString filename)
     QStandardItemModel *model = new QStandardItemModel;
 
     QFile fichier(filename);
-    fichier.open(QIODevice::ReadOnly | QIODevice::Text);
     QDomDocument *doc = new QDomDocument("docXml");
-    QDomElement elem = doc->documentElement();
-    QList<int> *currentChild = new QList<int>();
-    QList<int> *nodesLength = new QList<int>();
 
+    fichier.open(QIODevice::ReadOnly | QIODevice::Text);
     doc->setContent(&fichier);
     this->currentDocument = doc;
     fichier.close();
 
+    QDomElement elem = doc->documentElement();
+
+    QList<int> *currentChild = new QList<int>();
+    QList<int> *nodesLength = new QList<int>();
     for(int i = 0; i < 10; i++)
     {
         currentChild->append(0);
