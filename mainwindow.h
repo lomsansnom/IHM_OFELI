@@ -29,7 +29,8 @@ class MainWindow : public QMainWindow
         ~MainWindow();
         int openDatas(QString fileName);
         void buildTree(QDomNode doc, QStandardItemModel* model, QStandardItem *item, QList<int> *nbChildren, int childNumber, QList<int> *currentChild, int currentLevel);
-        void buildTreeColumn(QStandardItem *item);
+        void heightXML(QDomNode doc, int *height);
+        void nbAttributesMax(QDomNode doc, int *nbAttributes);
 
     public slots:
         void selectFile();
@@ -43,10 +44,13 @@ class MainWindow : public QMainWindow
         Ui::MainWindow *ui;
         QString filename;
         QString nodeName;
-        QStringList* tagList;
+        QString root;
+        QModelIndex currentIndex;
+        QStringList* nodeNameList;
         QDomDocument *currentDocument;
         QStandardItemModel *model;
         QList<QWidget*> list;
+        QList<QLayout*> listLayout;
 };
 
 #endif // MAINWINDOW_H
