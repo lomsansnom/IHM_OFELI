@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "dialogexec.h"
+#include "dialogaddnode.h"
 #include "ui_mainwindow.h"
 #include <iostream>
 #include <QComboBox>
@@ -12,79 +13,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    nodeNameList = new QStringList();
-    nodeNameList->append("Project");
-    nodeNameList->append("Domain");
-    nodeNameList->append("Mesh");
-    nodeNameList->append("Prescription");
-    nodeNameList->append("Material");
-    nodeNameList->append("Field");
-    nodeNameList->append("Function");
-
-    nodeNameList->append("verbose");
-    nodeNameList->append("output");
-    nodeNameList->append("save");
-    nodeNameList->append("plot");
-    nodeNameList->append("bc");
-    nodeNameList->append("bf");
-    nodeNameList->append("sf");
-    nodeNameList->append("init");
-    nodeNameList->append("max_time");
-    nodeNameList->append("nb_steps");
-    nodeNameList->append("nb_iter");
-    nodeNameList->append("tolerance");
-    nodeNameList->append("integer");
-    nodeNameList->append("double");
-    nodeNameList->append("complex");
-    nodeNameList->append("mesh_file");
-    nodeNameList->append("init_file");
-    nodeNameList->append("restart_file");
-    nodeNameList->append("bc_file");
-    nodeNameList->append("bf_file");
-    nodeNameList->append("sf_file");
-    nodeNameList->append("save_file");
-    nodeNameList->append("plot_file");
-    nodeNameList->append("data_file");
-    nodeNameList->append("aux_file");
-    nodeNameList->append("parameter");
-
-    nodeNameList->append("vertex");
-    nodeNameList->append("line");
-    nodeNameList->append("circle");
-    nodeNameList->append("subdomain");
-
-    nodeNameList->append("Nodes");
-    nodeNameList->append("Elements");
-    nodeNameList->append("Sides");
-    nodeNameList->append("Material");
-
-    nodeNameList->append("Variable");
-    nodeNameList->append("Data");
-
-    nodeNameList->append("BoundaryCondition");
-    nodeNameList->append("BodyForce");
-    nodeNameList->append("Source");
-    nodeNameList->append("BoundaryForce");
-    nodeNameList->append("Traction");
-    nodeNameList->append("Flux");
-    nodeNameList->append("Initial");
-
-    nodeNameList->append("Density");
-    nodeNameList->append("SpecificHeat");
-    nodeNameList->append("ThermalConductivity");
-    nodeNameList->append("MeltingTemperature");
-    nodeNameList->append("EvaporationTemperature");
-    nodeNameList->append("ThermalExpansion");
-    nodeNameList->append("LatentHeatMelting");
-    nodeNameList->append("LatentHeatEvaporation");
-    nodeNameList->append("ElectricConductivity");
-    nodeNameList->append("ElectricResistivity");
-    nodeNameList->append("MagneticPermeability");
-    nodeNameList->append("Viscosity");
-    nodeNameList->append("YoungModulus");
-    nodeNameList->append("PoissonRation");
-
-//    this->ui->formLayout->setMargin(20);
     this->ui->formLayout->setContentsMargins(5,30,5,10);
     this->ui->buttonAddParam->hide();
     this->ui->buttonValidate->hide();
@@ -96,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(this->ui->buttonExec, SIGNAL(clicked()), this, SLOT(executable()));
     QObject::connect(this->ui->buttonAddParam, SIGNAL(clicked()), this, SLOT(addParam()));
     QObject::connect(this->ui->buttonValidate, SIGNAL(clicked()), this, SLOT(validate()));
+    QObject::connect(this->ui->actionAdd_node, SIGNAL(triggered()), this, SLOT(openWindowAddNode()));
+    QObject::connect(this->ui->actionDelete_selected_node, SIGNAL(triggered()), this, SLOT(deleteSelectedNode()));
 }
 
 MainWindow::~MainWindow()
@@ -289,6 +219,67 @@ void MainWindow::nbAttributesMax(QDomNode doc, int *nbAttributes)
     }
 }
 
+void MainWindow::getTagList(QDomNode doc, QStringList *tagList)
+{
+    if(!doc.isNull())
+    {
+        tagList->append(doc.toElement().tagName());
+
+        if(!doc.childNodes().isEmpty() && doc.firstChild().toElement().tagName() != "")
+        {
+            QDomNodeList nodeList = doc.childNodes();
+
+            for(int i = 0; i < nodeList.length(); i++)
+            {
+                getTagList(nodeList.at(i), tagList);
+            }
+        }
+    }
+}
+
+void MainWindow::addNode(QString nameParent, QString nameNode, QString textNode)
+{
+    QStandardItemModel *modelUpdated = new QStandardItemModel();
+    int height = 0;
+    QList<int> *currentChild = new QList<int>();
+    QList<int> *nodesLength = new QList<int>();
+
+    currentDocument->elementsByTagName(nameParent).item(0).appendChild((new QDomDocument())->createElement(nameNode));
+    currentDocument->elementsByTagName(nameParent).item(0).lastChild().appendChild((new QDomDocument())->createTextNode(textNode));
+
+    heightXML(currentDocument->documentElement(), &height);
+    for(int i = 0; i < height-1; i++)
+    {
+        currentChild->append(0);
+        nodesLength->append(0);
+    }
+
+    buildTree(currentDocument->documentElement(), modelUpdated, new QStandardItem(currentDocument->documentElement().tagName()), nodesLength, 0, currentChild, -1);
+    model = modelUpdated;
+    ui->treeView->setModel(model);
+}
+
+void MainWindow:: clearFormLayout()
+{
+    if(!list.empty())
+    {
+        for(int i = 0; i < list.length(); i++)
+        {
+            delete list[i];
+        }
+        list.clear();
+        if(!listLayout.isEmpty())
+        {
+            for(int i = 0; i < listLayout.length(); i++)
+            {
+                delete listLayout[i];
+            }
+            listLayout.clear();
+        }
+    }
+    ui->label->setText("");
+}
+
 //Slots
 
 void MainWindow::selectFile()
@@ -320,26 +311,10 @@ void MainWindow::showDetails(QModelIndex index)
     this->ui->buttonAddParam->show();
     this->ui->buttonValidate->show();
 
-    this->ui->label->setText(QString("Edit ") + nodeName);
-
     //Clear formLayout to remove the parameter related to the last element selected
-    if(!list.empty())
-    {
-        for(int i = 0; i < list.length(); i++)
-        {
-            delete list[i];
-        }
-        list.clear();
-        if(!listLayout.isEmpty())
-        {
-            for(int i = 0; i < listLayout.length(); i++)
-            {
-                delete listLayout[i];
-            }
-            listLayout.clear();
-        }
-    }
+    clearFormLayout();
 
+    this->ui->label->setText("Edit " + nodeName);
 
     if(nodeName.compare(root) != 0)
     {
@@ -363,7 +338,7 @@ void MainWindow::showDetails(QModelIndex index)
         }
 
         //Add all attributes in formLayout to display them and store them so we'll be able to remove them from formLayout later
-        //The QHBoxLayout is uses to display the name and the value of the attribute on the same line
+        //The QHBoxLayout is used to display the name and the value of the attribute on the same line
         QHBoxLayout *horizontalLayout;
         //if(!currentDocument->elementsByTagName(nodeName).item(0).childNodes().item(0).isElement() && currentDocument->elementsByTagName(nodeName).item(0).hasChildNodes())
         if(listAttr[1] != "")
@@ -408,26 +383,55 @@ void MainWindow::validate()
     QStandardItemModel *modelUpdated = new QStandardItemModel;
     QList<int> *currentChild = new QList<int>();
     QList<int> *nodesLength = new QList<int>();
-    QStringList listAttr;
+    QStringList *listAttr = new QStringList();
     int height = 0;
+    int ii = 0;
+    QList<int> *indexToDelete = new QList<int>();
+    bool indexToDeleteFound = false;
 
     for(int i = 0; i < currentDocument->elementsByTagName(nodeName).item(0).attributes().length(); i++)
     {
-        listAttr.append(currentDocument->elementsByTagName(nodeName).item(0).attributes().item(i).toAttr().name().trimmed());
+        listAttr->append(currentDocument->elementsByTagName(nodeName).item(0).attributes().item(i).toAttr().name().trimmed());
     }
 
+    //If the name of existing attributes are modified, first we need to delete them from the document and add them with their new name
+    //The firsts elements in list are the ones which were added so we need to start at the first "old attribute"
+    ii = (list.length()/2-listAttr->length())*2;
 
+    //get the index of existing attributes if their name is modified
+    for(int i = 0; i < listAttr->length(); i++)
+    {
+        while(ii < list.length() && !indexToDeleteFound)
+        {
+            if(((QLineEdit*)list[ii])->text().trimmed() == listAttr->at(i))
+            {
+                indexToDeleteFound = true;
+            }
+            ii += 2;
+        }
+        if(!indexToDeleteFound)
+        {
+            indexToDelete->append(i);
+        }
+        ii = (list.length()/2-listAttr->length())*2;;
+        indexToDeleteFound = false;
+    }
+    //delete the attributes if their name is modified
+    for(int i = 0; i < indexToDelete->length(); i++)
+    {
+        currentDocument->elementsByTagName(nodeName).item(0).toElement().removeAttribute(listAttr->at(indexToDelete->at(i)));
+    }
+
+    //add the attributes to the document
     for(int i = 0; i < list.length(); i += 2)
     {
         attrName = ((QLineEdit*)list[i])->text().trimmed();
         attrValue = ((QLineEdit*)list[i+1])->text().trimmed();
-        if(!listAttr.contains(attrName))
-        {
-            cout << attrName.toStdString() << endl;
-            currentDocument->elementsByTagName(nodeName).item(0).toElement().setAttribute(attrName, attrValue);
-        }
+
+        currentDocument->elementsByTagName(nodeName).item(0).toElement().setAttribute(attrName, attrValue);
     }
 
+    //update the tree
     heightXML(currentDocument->documentElement(), &height);
     for(int i = 0; i < height-1; i++)
     {
@@ -437,6 +441,45 @@ void MainWindow::validate()
     buildTree(currentDocument->documentElement(), modelUpdated, new QStandardItem(currentDocument->documentElement().tagName()), nodesLength, 0, currentChild, -1);
     model = modelUpdated;
     this->ui->treeView->setModel(model);
+    clearFormLayout();
+}
+
+void MainWindow::openWindowAddNode()
+{
+    DialogAddNode *addNodeWindow;
+    QStringList *tagList = new QStringList;
+
+    if(!currentDocument->isNull())
+    {
+        if(!currentDocument->documentElement().isNull())
+        {
+            getTagList(currentDocument->documentElement(), tagList);
+        }
+    }
+    addNodeWindow = new DialogAddNode(tagList, this);
+    addNodeWindow->show();
+}
+
+void MainWindow::deleteSelectedNode()
+{
+    QDomNode parent = currentDocument->elementsByTagName(model->itemFromIndex(ui->treeView->currentIndex().sibling(ui->treeView->currentIndex().row(), 0))->text()).item(0).parentNode();
+    QStandardItemModel *modelUpdated = new QStandardItemModel();
+    int height = 0;
+    QList<int> *currentChild = new QList<int>();
+    QList<int> *nodesLength = new QList<int>();
+
+    parent.removeChild(currentDocument->elementsByTagName(model->itemFromIndex(ui->treeView->currentIndex().sibling(ui->treeView->currentIndex().row(), 0))->text()).item(0));
+
+    heightXML(currentDocument->documentElement(), &height);
+    for(int i = 0; i < height-1; i++)
+    {
+        currentChild->append(0);
+        nodesLength->append(0);
+    }
+
+    buildTree(currentDocument->documentElement(), modelUpdated, new QStandardItem(currentDocument->documentElement().tagName()), nodesLength, 0, currentChild, -1);
+    model = modelUpdated;
+    ui->treeView->setModel(model);
 }
 
 void MainWindow::saveFile()

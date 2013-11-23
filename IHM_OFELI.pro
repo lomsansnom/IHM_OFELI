@@ -17,14 +17,17 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     dialogexec.cpp \
-    dialogresults.cpp
+    dialogresults.cpp \
+    dialogaddnode.cpp
 
 HEADERS  += mainwindow.h\
         ui_mainwindow.h \
     dialogexec.h \
     ui_dialogexec.h \
     dialogresults.h \
-    ui_dialogresults.h
+    ui_dialogresults.h \
+    dialogaddnode.h
 FORMS    += mainwindow.ui \
     dialogexec.ui \
-    dialogresults.ui
+    dialogresults.ui \
+    dialogaddnode.ui

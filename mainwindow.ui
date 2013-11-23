@@ -145,6 +145,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionAdd_node"/>
+   <addaction name="separator"/>
+   <addaction name="actionDelete_selected_node"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionA_propos">
@@ -173,6 +175,11 @@
   <action name="actionAdd_node">
    <property name="text">
     <string>Add node</string>
+   </property>
+  </action>
+  <action name="actionDelete_selected_node">
+   <property name="text">
+    <string>Delete selected node</string>
    </property>
   </action>
  </widget>

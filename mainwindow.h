@@ -31,6 +31,9 @@ class MainWindow : public QMainWindow
         void buildTree(QDomNode doc, QStandardItemModel* model, QStandardItem *item, QList<int> *nbChildren, int childNumber, QList<int> *currentChild, int currentLevel);
         void heightXML(QDomNode doc, int *height);
         void nbAttributesMax(QDomNode doc, int *nbAttributes);
+        void getTagList(QDomNode doc, QStringList *tagList);
+        void addNode(QString nameParent, QString nameNode, QString textNode);
+        void clearFormLayout();
 
     public slots:
         void selectFile();
@@ -39,6 +42,8 @@ class MainWindow : public QMainWindow
         void executable();
         void addParam();
         void validate();
+        void openWindowAddNode();
+        void deleteSelectedNode();
 
     private:
         Ui::MainWindow *ui;
@@ -46,7 +51,6 @@ class MainWindow : public QMainWindow
         QString nodeName;
         QString root;
         QModelIndex currentIndex;
-        QStringList* nodeNameList;
         QDomDocument *currentDocument;
         QStandardItemModel *model;
         QList<QWidget*> list;
