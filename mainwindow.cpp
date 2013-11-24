@@ -18,6 +18,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->buttonAddParam->hide();
     ui->buttonValidate->hide();
 
+    signalMapper = new QSignalMapper(this);
+
     QObject::connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(selectFile()));
     QObject::connect(ui->actionSave_File, SIGNAL(triggered()), this, SLOT(saveFile()));
     QObject::connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
@@ -291,14 +293,22 @@ void MainWindow:: clearFormLayout()
             delete list[i];
         }
         list.clear();
-        if(!listLayout.isEmpty())
+    }
+    if(!listLayout.isEmpty())
+    {
+        for(int i = 0; i < listLayout.length(); i++)
         {
-            for(int i = 0; i < listLayout.length(); i++)
-            {
-                delete listLayout[i];
-            }
-            listLayout.clear();
+            delete listLayout[i];
         }
+        listLayout.clear();
+    }
+    if(!listButton.empty())
+    {
+        for(int i = 0; i < listButton.length(); i++)
+        {
+            delete listButton[i];
+        }
+        listButton.clear();
     }
     ui->label->setText("");
 }
@@ -333,6 +343,8 @@ void MainWindow::showDetails(QModelIndex index)
     currentIndex = index;
     ui->buttonAddParam->show();
     ui->buttonValidate->show();
+
+    signalMapper = new QSignalMapper(this);
 
     //Clear formLayout to remove the parameter related to the last element selected
     clearFormLayout();
@@ -381,12 +393,40 @@ void MainWindow::showDetails(QModelIndex index)
             horizontalLayout = new QHBoxLayout();
             list.push_front(new QLineEdit(listAttr[i+1]));
             list.push_front(new QLineEdit(listAttr[i]));
+            listButton.push_front(new QPushButton("-"));
             horizontalLayout->addWidget(list[0]);
             horizontalLayout->addWidget(list[1]);
+            QObject::connect(listButton[0], SIGNAL(clicked()), signalMapper, SLOT(map()));
+            signalMapper->setMapping(listButton[0], listAttr[i]);
+            horizontalLayout->addWidget(listButton[0]);
             listLayout.push_front(horizontalLayout);
             ui->formLayout->addRow(horizontalLayout);
         }
+        QObject::connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(deleteAttribute(QString)));
     }
+}
+
+void MainWindow::deleteAttribute(QString nameAttribute)
+{
+    QStandardItemModel *modelUpdated = new QStandardItemModel();
+    int height = 0;
+    QList<int> *currentChild = new QList<int>();
+    QList<int> *nodesLength = new QList<int>();
+
+    currentDocument->elementsByTagName(model->itemFromIndex(ui->treeView->currentIndex())->text()).item(0).toElement().removeAttribute(nameAttribute.trimmed());
+
+    heightXML(currentDocument->documentElement(), &height);
+    for(int i = 0; i < height-1; i++)
+    {
+        currentChild->append(0);
+        nodesLength->append(0);
+    }
+
+    buildTree(currentDocument->documentElement(), modelUpdated, new QStandardItem(currentDocument->documentElement().tagName()), nodesLength, 0, currentChild, -1);
+    model = modelUpdated;
+    ui->treeView->setModel(model);
+
+    clearFormLayout();
 }
 
 void MainWindow::addParam()

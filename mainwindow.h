@@ -46,6 +46,7 @@ class MainWindow : public QMainWindow
         void openWindowAddNode();
         void deleteSelectedNode();
         void openWindowModifyNode();
+        void deleteAttribute(QString nameAttribute);
 
     private:
         Ui::MainWindow *ui;
@@ -56,7 +57,9 @@ class MainWindow : public QMainWindow
         QDomDocument *currentDocument;
         QStandardItemModel *model;
         QList<QWidget*> list;
+        QList<QPushButton*> listButton;
         QList<QLayout*> listLayout;
+        QSignalMapper *signalMapper;
 };
 
 #endif // MAINWINDOW_H
