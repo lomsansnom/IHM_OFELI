@@ -18,7 +18,8 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     dialogexec.cpp \
     dialogresults.cpp \
-    dialogaddnode.cpp
+    dialogaddnode.cpp \
+    dialogmodifynode.cpp
 
 HEADERS  += mainwindow.h\
         ui_mainwindow.h \
@@ -26,8 +27,10 @@ HEADERS  += mainwindow.h\
     ui_dialogexec.h \
     dialogresults.h \
     ui_dialogresults.h \
-    dialogaddnode.h
+    dialogaddnode.h \
+    dialogmodifynode.h
 FORMS    += mainwindow.ui \
     dialogexec.ui \
     dialogresults.ui \
-    dialogaddnode.ui
+    dialogaddnode.ui \
+    dialogmodifynode.ui

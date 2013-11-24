@@ -33,6 +33,7 @@ class MainWindow : public QMainWindow
         void nbAttributesMax(QDomNode doc, int *nbAttributes);
         void getTagList(QDomNode doc, QStringList *tagList);
         void addNode(QString nameParent, QString nameNode, QString textNode);
+        void modifyNode(QString nodeSelected, QString newName);
         void clearFormLayout();
 
     public slots:
@@ -44,6 +45,7 @@ class MainWindow : public QMainWindow
         void validate();
         void openWindowAddNode();
         void deleteSelectedNode();
+        void openWindowModifyNode();
 
     private:
         Ui::MainWindow *ui;

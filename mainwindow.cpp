@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "dialogexec.h"
 #include "dialogaddnode.h"
+#include "dialogmodifynode.h"
 #include "ui_mainwindow.h"
 #include <iostream>
 #include <QComboBox>
@@ -13,19 +14,20 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->ui->formLayout->setContentsMargins(5,30,5,10);
-    this->ui->buttonAddParam->hide();
-    this->ui->buttonValidate->hide();
+    ui->formLayout->setContentsMargins(5,30,5,10);
+    ui->buttonAddParam->hide();
+    ui->buttonValidate->hide();
 
-    QObject::connect(this->ui->actionOpen, SIGNAL(triggered()), this, SLOT(selectFile()));
-    QObject::connect(this->ui->actionSave_File, SIGNAL(triggered()), this, SLOT(saveFile()));
-    QObject::connect(this->ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
-    QObject::connect(this->ui->buttonSave, SIGNAL(clicked()), this, SLOT(saveFile()));
-    QObject::connect(this->ui->buttonExec, SIGNAL(clicked()), this, SLOT(executable()));
-    QObject::connect(this->ui->buttonAddParam, SIGNAL(clicked()), this, SLOT(addParam()));
-    QObject::connect(this->ui->buttonValidate, SIGNAL(clicked()), this, SLOT(validate()));
-    QObject::connect(this->ui->actionAdd_node, SIGNAL(triggered()), this, SLOT(openWindowAddNode()));
-    QObject::connect(this->ui->actionDelete_selected_node, SIGNAL(triggered()), this, SLOT(deleteSelectedNode()));
+    QObject::connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(selectFile()));
+    QObject::connect(ui->actionSave_File, SIGNAL(triggered()), this, SLOT(saveFile()));
+    QObject::connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
+    QObject::connect(ui->buttonSave, SIGNAL(clicked()), this, SLOT(saveFile()));
+    QObject::connect(ui->buttonExec, SIGNAL(clicked()), this, SLOT(executable()));
+    QObject::connect(ui->buttonAddParam, SIGNAL(clicked()), this, SLOT(addParam()));
+    QObject::connect(ui->buttonValidate, SIGNAL(clicked()), this, SLOT(validate()));
+    QObject::connect(ui->actionAdd_node, SIGNAL(triggered()), this, SLOT(openWindowAddNode()));
+    QObject::connect(ui->actionDelete_selected_node, SIGNAL(triggered()), this, SLOT(deleteSelectedNode()));
+    QObject::connect(ui->actionModifySelectedNode, SIGNAL(triggered()), this, SLOT(openWindowModifyNode()));
 }
 
 MainWindow::~MainWindow()
@@ -47,7 +49,7 @@ int MainWindow::openDatas(QString filename)
     //open the selected file and get the xml document in doc
     fichier.open(QIODevice::ReadOnly | QIODevice::Text);
     doc->setContent(&fichier);
-    this->currentDocument = doc;
+    currentDocument = doc;
     fichier.close();
 
     //get the first element of the document
@@ -65,9 +67,9 @@ int MainWindow::openDatas(QString filename)
     buildTree(elem, model, new QStandardItem(elem.tagName()), nodesLength, 0, currentChild, -1);
 
     this->model = model;
-    this->ui->treeView->setModel(model);
+    ui->treeView->setModel(model);
 
-    QObject::connect(this->ui->treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(showDetails(QModelIndex)));
+    QObject::connect(ui->treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(showDetails(QModelIndex)));
     return 0;
 }
 
@@ -259,6 +261,27 @@ void MainWindow::addNode(QString nameParent, QString nameNode, QString textNode)
     ui->treeView->setModel(model);
 }
 
+void MainWindow::modifyNode(QString nodeSelected, QString newName)
+{
+    QStandardItemModel *modelUpdated = new QStandardItemModel();
+    int height = 0;
+    QList<int> *currentChild = new QList<int>();
+    QList<int> *nodesLength = new QList<int>();
+
+    currentDocument->elementsByTagName(nodeSelected).item(0).toElement().setTagName(newName);
+
+    heightXML(currentDocument->documentElement(), &height);
+    for(int i = 0; i < height-1; i++)
+    {
+        currentChild->append(0);
+        nodesLength->append(0);
+    }
+
+    buildTree(currentDocument->documentElement(), modelUpdated, new QStandardItem(currentDocument->documentElement().tagName()), nodesLength, 0, currentChild, -1);
+    model = modelUpdated;
+    ui->treeView->setModel(model);
+}
+
 void MainWindow:: clearFormLayout()
 {
     if(!list.empty())
@@ -308,13 +331,13 @@ void MainWindow::showDetails(QModelIndex index)
 
     nodeName = model->itemFromIndex(index)->text();
     currentIndex = index;
-    this->ui->buttonAddParam->show();
-    this->ui->buttonValidate->show();
+    ui->buttonAddParam->show();
+    ui->buttonValidate->show();
 
     //Clear formLayout to remove the parameter related to the last element selected
     clearFormLayout();
 
-    this->ui->label->setText("Edit " + nodeName);
+    ui->label->setText("Edit " + nodeName);
 
     if(nodeName.compare(root) != 0)
     {
@@ -349,7 +372,7 @@ void MainWindow::showDetails(QModelIndex index)
             horizontalLayout->addWidget(list[0]);
             horizontalLayout->addWidget(list[1]);
             listLayout.push_front(horizontalLayout);
-            this->ui->formLayout->addRow(horizontalLayout);
+            ui->formLayout->addRow(horizontalLayout);
         }
 
 
@@ -361,7 +384,7 @@ void MainWindow::showDetails(QModelIndex index)
             horizontalLayout->addWidget(list[0]);
             horizontalLayout->addWidget(list[1]);
             listLayout.push_front(horizontalLayout);
-            this->ui->formLayout->addRow(horizontalLayout);
+            ui->formLayout->addRow(horizontalLayout);
         }
     }
 }
@@ -374,7 +397,7 @@ void MainWindow::addParam()
     list.push_front(new QLineEdit("Name"));
     horizontalLayout->addWidget(list[0]);
     horizontalLayout->addWidget(list[1]);
-    this->ui->formLayout->addRow(horizontalLayout);
+    ui->formLayout->addRow(horizontalLayout);
 }
 
 void MainWindow::validate()
@@ -440,7 +463,7 @@ void MainWindow::validate()
     }
     buildTree(currentDocument->documentElement(), modelUpdated, new QStandardItem(currentDocument->documentElement().tagName()), nodesLength, 0, currentChild, -1);
     model = modelUpdated;
-    this->ui->treeView->setModel(model);
+    ui->treeView->setModel(model);
     clearFormLayout();
 }
 
@@ -458,6 +481,13 @@ void MainWindow::openWindowAddNode()
     }
     addNodeWindow = new DialogAddNode(tagList, this);
     addNodeWindow->show();
+}
+
+void MainWindow::openWindowModifyNode()
+{
+    DialogModifyNode *modifyNodeWindow = new DialogModifyNode(this, model->itemFromIndex(ui->treeView->currentIndex())->text());
+    cout << model->itemFromIndex(ui->treeView->currentIndex())->text().toStdString() << endl;
+    modifyNodeWindow->show();
 }
 
 void MainWindow::deleteSelectedNode()

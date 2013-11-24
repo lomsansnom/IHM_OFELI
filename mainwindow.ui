@@ -146,6 +146,8 @@
    </attribute>
    <addaction name="actionAdd_node"/>
    <addaction name="separator"/>
+   <addaction name="actionModifySelectedNode"/>
+   <addaction name="separator"/>
    <addaction name="actionDelete_selected_node"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -180,6 +182,11 @@
   <action name="actionDelete_selected_node">
    <property name="text">
     <string>Delete selected node</string>
+   </property>
+  </action>
+  <action name="actionModifySelectedNode">
+   <property name="text">
+    <string>Modify selected node</string>
    </property>
   </action>
  </widget>
