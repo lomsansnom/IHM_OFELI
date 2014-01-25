@@ -17,20 +17,26 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     dialogexec.cpp \
-    dialogresults.cpp \
     dialogaddnode.cpp \
-    dialogmodifynode.cpp
+    dialogmodifynode.cpp \
+    dialogsave.cpp \
+    dialogaddcomment.cpp
 
 HEADERS  += mainwindow.h\
         ui_mainwindow.h \
     dialogexec.h \
     ui_dialogexec.h \
-    dialogresults.h \
     ui_dialogresults.h \
     dialogaddnode.h \
-    dialogmodifynode.h
+    dialogmodifynode.h \
+    dialogsave.h \
+    dialogaddcomment.h
 FORMS    += mainwindow.ui \
     dialogexec.ui \
-    dialogresults.ui \
     dialogaddnode.ui \
-    dialogmodifynode.ui
+    dialogmodifynode.ui \
+    dialogsave.ui \
+    dialogaddcomment.ui
+
+RC_FILE = IHM_OFELI.rc
+ICON = icon.icns

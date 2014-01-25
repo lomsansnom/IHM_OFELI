@@ -9,15 +9,26 @@ namespace Ui {
 class DialogAddNode;
 }
 
+/*!
+ * \brief The DialogAddNode class manages the addition of a node.
+ */
 class DialogAddNode : public QDialog
 {
     Q_OBJECT
 
     public:
+        /*!
+         * \brief Constructor
+         * \param parentList The list of possibles parent to the new node.
+         * \param parent
+         */
         explicit DialogAddNode(QStringList* parentList, MainWindow *parent);
         ~DialogAddNode();
 
     public slots:
+        /*!
+         * \brief Add the node to the TreeView (and to the document) by calling tha addNode function of the MainWindow
+         */
         void addNode();
 
     private:

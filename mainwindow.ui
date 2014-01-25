@@ -6,127 +6,42 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>705</width>
-    <height>511</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralWidget">
-   <widget class="QTreeView" name="treeView">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>10</y>
-      <width>361</width>
-      <height>451</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>380</x>
-      <y>10</y>
-      <width>111</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="buttonSave">
-    <property name="geometry">
-     <rect>
-      <x>420</x>
-      <y>410</y>
-      <width>80</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Save As...</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="buttonExec">
-    <property name="geometry">
-     <rect>
-      <x>560</x>
-      <y>410</y>
-      <width>91</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Execute</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="buttonAddParam">
-    <property name="geometry">
-     <rect>
-      <x>400</x>
-      <y>371</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Add Parameter</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="buttonValidate">
-    <property name="geometry">
-     <rect>
-      <x>550</x>
-      <y>370</y>
-      <width>111</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Validate</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="formLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>369</x>
-      <y>9</y>
-      <width>331</width>
-      <height>361</height>
-     </rect>
-    </property>
-    <layout class="QFormLayout" name="formLayout"/>
-   </widget>
-  </widget>
+  <widget class="QWidget" name="centralWidget"/>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>705</width>
+     <width>800</width>
      <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFichier">
     <property name="title">
-     <string>Fichier</string>
+     <string>File</string>
     </property>
     <addaction name="actionOpen"/>
+    <addaction name="actionRecent_files"/>
+    <addaction name="actionSave"/>
     <addaction name="actionSave_File"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuEdition">
     <property name="title">
-     <string>Edition</string>
+     <string>Edit</string>
     </property>
    </widget>
    <widget class="QMenu" name="menuAide">
     <property name="title">
-     <string>Aide</string>
+     <string>Help</string>
     </property>
     <addaction name="actionA_propos"/>
    </widget>
@@ -145,6 +60,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionAdd_node"/>
+   <addaction name="actionAdd_Comment"/>
    <addaction name="separator"/>
    <addaction name="actionModifySelectedNode"/>
    <addaction name="separator"/>
@@ -153,7 +69,7 @@
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionA_propos">
    <property name="text">
-    <string>A propos</string>
+    <string>About</string>
    </property>
   </action>
   <action name="actionOpen">
@@ -171,7 +87,10 @@
   </action>
   <action name="actionSave_File">
    <property name="text">
-    <string>Save File</string>
+    <string>Save As</string>
+   </property>
+   <property name="toolTip">
+    <string>Save As</string>
    </property>
   </action>
   <action name="actionAdd_node">
@@ -187,6 +106,21 @@
   <action name="actionModifySelectedNode">
    <property name="text">
     <string>Modify selected node</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionRecent_files">
+   <property name="text">
+    <string>Recent files</string>
+   </property>
+  </action>
+  <action name="actionAdd_Comment">
+   <property name="text">
+    <string>Add Comment after selection</string>
    </property>
   </action>
  </widget>

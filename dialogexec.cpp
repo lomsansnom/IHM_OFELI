@@ -1,11 +1,10 @@
 #include "dialogexec.h"
 #include "ui_dialogexec.h"
-#include "dialogresults.h"
 
 #include <iostream>
 using namespace std;
 
-DialogExec::DialogExec(QWidget *parent, QString filenameDat) :
+DialogExec::DialogExec(QTextEdit *parent, QString filenameDat) :
     QDialog(parent),
     ui(new Ui::DialogExec)
 {
@@ -58,12 +57,13 @@ void DialogExec::execute()
     proc->start("sh", QStringList() << "-c" << "cd " + this->ui->pathExec->text() + " && " + this->ui->nameExec->text() + " " + this->ui->pathDat->text());
     proc->waitForFinished(-1);
 
-    QString p_stdout = proc->readAll();
+    QString result = proc->readAll();
     proc->close();
-    cout << p_stdout.toStdString() << endl;
-    DialogResults *resWindow = new DialogResults(parent, p_stdout);
+    parent->setText(parent->toPlainText() + "\n" + result);
+    this->close();
+    /*DialogResults *resWindow = new DialogResults(parent, result);
     resWindow->show();
-    resWindow->closeExec(this);
+    resWindow->closeExec(this);*/
 }
 
 

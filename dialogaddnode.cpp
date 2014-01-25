@@ -84,7 +84,9 @@ DialogAddNode::DialogAddNode(QStringList* parentList, MainWindow *parent) :
 
     ui->setupUi(this);
     ui->parentList->addItems(*parentList);
+    ui->parentList->setFixedWidth(100);
     ui->tagList->addItems(*nodeNameList);
+    ui->tagList->setFixedWidth(100);
 
     this->parent = parent;
 

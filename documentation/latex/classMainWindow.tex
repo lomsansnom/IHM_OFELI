@@ -1,0 +1,556 @@
+\hypertarget{classMainWindow}{\section{Main\-Window Class Reference}
+\label{classMainWindow}\index{Main\-Window@{Main\-Window}}
+}
+
+
+The \hyperlink{classMainWindow}{Main\-Window} class manages all the user interface.  
+
+
+
+
+{\ttfamily \#include $<$mainwindow.\-h$>$}
+
+Inheritance diagram for Main\-Window\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classMainWindow}
+\end{center}
+\end{figure}
+\subsection*{Public Slots}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classMainWindow_a2ae51e1e864469c364b0f8ca9f001926}{void \hyperlink{classMainWindow_a2ae51e1e864469c364b0f8ca9f001926}{select\-File} ()}\label{classMainWindow_a2ae51e1e864469c364b0f8ca9f001926}
+
+\begin{DoxyCompactList}\small\item\em Opens a dialog to select an X\-M\-L file and store the file slected in filename. \end{DoxyCompactList}\item 
+void \hyperlink{classMainWindow_a91bb6afc2332387aabd2c56a060cea2e}{show\-Details} (Q\-Model\-Index index)
+\begin{DoxyCompactList}\small\item\em Shows the list of editables elements for the node slected. Informations are shown in the right part of the window. \end{DoxyCompactList}\item 
+\hypertarget{classMainWindow_a1725a0bf1d276bb1fbc57ef669d73208}{void \hyperlink{classMainWindow_a1725a0bf1d276bb1fbc57ef669d73208}{save\-File\-As} ()}\label{classMainWindow_a1725a0bf1d276bb1fbc57ef669d73208}
+
+\begin{DoxyCompactList}\small\item\em Save the X\-M\-L file by replacing the file selected before. \end{DoxyCompactList}\item 
+\hypertarget{classMainWindow_a464aaa4d378e7b2d814756a73d6e1ed6}{void \hyperlink{classMainWindow_a464aaa4d378e7b2d814756a73d6e1ed6}{save\-File} ()}\label{classMainWindow_a464aaa4d378e7b2d814756a73d6e1ed6}
+
+\begin{DoxyCompactList}\small\item\em Opens a dialog to save the X\-M\-L file. \end{DoxyCompactList}\item 
+\hypertarget{classMainWindow_a99d6bd9b5763e598eed579cd670d1298}{void \hyperlink{classMainWindow_a99d6bd9b5763e598eed579cd670d1298}{executable} ()}\label{classMainWindow_a99d6bd9b5763e598eed579cd670d1298}
+
+\begin{DoxyCompactList}\small\item\em Opens a dialog to execute the O\-F\-E\-L\-I program. \end{DoxyCompactList}\item 
+\hypertarget{classMainWindow_a961f84bb1d476d689527e925d06133f3}{void \hyperlink{classMainWindow_a961f84bb1d476d689527e925d06133f3}{add\-Param} ()}\label{classMainWindow_a961f84bb1d476d689527e925d06133f3}
+
+\begin{DoxyCompactList}\small\item\em Updates the right part of the window and add two fields editables so the user can set the name and the value of a new attribute. \end{DoxyCompactList}\item 
+\hypertarget{classMainWindow_a05d44eee1bef57891a25366b45e6c3b2}{void \hyperlink{classMainWindow_a05d44eee1bef57891a25366b45e6c3b2}{insert} ()}\label{classMainWindow_a05d44eee1bef57891a25366b45e6c3b2}
+
+\begin{DoxyCompactList}\small\item\em Updates the tree (and the document) with the attributes modified or added by the user. \end{DoxyCompactList}\item 
+\hypertarget{classMainWindow_add4a43152e4abb3e68c1541a2663e794}{void \hyperlink{classMainWindow_add4a43152e4abb3e68c1541a2663e794}{open\-Window\-Add\-Node} ()}\label{classMainWindow_add4a43152e4abb3e68c1541a2663e794}
+
+\begin{DoxyCompactList}\small\item\em Opens a dialog to add a new node to the tree (and the document). \end{DoxyCompactList}\item 
+\hypertarget{classMainWindow_aa0322653d852753a24a8974027c23f16}{void \hyperlink{classMainWindow_aa0322653d852753a24a8974027c23f16}{delete\-Selected\-Node} ()}\label{classMainWindow_aa0322653d852753a24a8974027c23f16}
+
+\begin{DoxyCompactList}\small\item\em Deletes the selected node in the tree. \end{DoxyCompactList}\item 
+\hypertarget{classMainWindow_a29fc99dbacbd3e451df12f6e6b01d7be}{void \hyperlink{classMainWindow_a29fc99dbacbd3e451df12f6e6b01d7be}{open\-Window\-Modify\-Node} ()}\label{classMainWindow_a29fc99dbacbd3e451df12f6e6b01d7be}
+
+\begin{DoxyCompactList}\small\item\em Opens a dialog to modify the name of the selected node in the tree. \end{DoxyCompactList}\item 
+void \hyperlink{classMainWindow_a7ead9d2b3de68f8ca35c3c4234c3316b}{delete\-Attribute} (Q\-String name\-Attribute)
+\begin{DoxyCompactList}\small\item\em Delete a given attribute from a node. \end{DoxyCompactList}\item 
+\hypertarget{classMainWindow_a85bdf02a928c14f368a54ab2fa92cc05}{void \hyperlink{classMainWindow_a85bdf02a928c14f368a54ab2fa92cc05}{clear\-Result} ()}\label{classMainWindow_a85bdf02a928c14f368a54ab2fa92cc05}
+
+\begin{DoxyCompactList}\small\item\em Clears the text area where the results are shown. \end{DoxyCompactList}\item 
+\hypertarget{classMainWindow_a3867c6fa0d0e97c5a9dcc7dd67ce528f}{void \hyperlink{classMainWindow_a3867c6fa0d0e97c5a9dcc7dd67ce528f}{copy\-To\-Clipboard} ()}\label{classMainWindow_a3867c6fa0d0e97c5a9dcc7dd67ce528f}
+
+\begin{DoxyCompactList}\small\item\em Copies the contents of the text area to the clipboard. \end{DoxyCompactList}\item 
+\hypertarget{classMainWindow_acb446340737c00f7970ee3cf56982679}{void \hyperlink{classMainWindow_acb446340737c00f7970ee3cf56982679}{open\-Recent} ()}\label{classMainWindow_acb446340737c00f7970ee3cf56982679}
+
+\begin{DoxyCompactList}\small\item\em Opens the file on which the user clicked in the Recent files menu. \end{DoxyCompactList}\item 
+\hypertarget{classMainWindow_a71a0deb7cce3c55d9bec6c1ce69c79b3}{void \hyperlink{classMainWindow_a71a0deb7cce3c55d9bec6c1ce69c79b3}{open\-Window\-Add\-Comment} ()}\label{classMainWindow_a71a0deb7cce3c55d9bec6c1ce69c79b3}
+
+\begin{DoxyCompactList}\small\item\em Opens a dialog to add a new comment to the tree (and the document). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classMainWindow_a8b244be8b7b7db1b08de2a2acb9409db}{Main\-Window} (Q\-Widget $\ast$parent=0)
+\begin{DoxyCompactList}\small\item\em \hyperlink{classMainWindow}{Main\-Window}. \end{DoxyCompactList}\item 
+\hypertarget{classMainWindow_ae98d00a93bc118200eeef9f9bba1dba7}{\hyperlink{classMainWindow_ae98d00a93bc118200eeef9f9bba1dba7}{$\sim$\-Main\-Window} ()}\label{classMainWindow_ae98d00a93bc118200eeef9f9bba1dba7}
+
+\begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item 
+void \hyperlink{classMainWindow_a39b737ba3023be40c3c8c03a264934b2}{open\-Datas} (Q\-String file\-Name)
+\begin{DoxyCompactList}\small\item\em Opens the X\-M\-L file containing the datas needed to execute the O\-F\-E\-L\-I program and generate the tree associated. \end{DoxyCompactList}\item 
+void \hyperlink{classMainWindow_acdc6db8778f0183a241c92dae9f138f0}{build\-Tree} (Q\-Dom\-Node doc, Q\-Standard\-Item\-Model $\ast$model, Q\-Standard\-Item $\ast$item, Q\-List$<$ int $>$ $\ast$nb\-Children, int child\-Number, Q\-List$<$ int $>$ $\ast$current\-Child, int current\-Level)
+\begin{DoxyCompactList}\small\item\em Generates a Q\-Standard\-Item\-Model recursively from a Q\-Dom\-Document. This model can be used by a Tree\-View. \end{DoxyCompactList}\item 
+void \hyperlink{classMainWindow_af90fffcac39eb4bc42810588408111c3}{get\-Tag\-Attributes} (Q\-List$<$ Q\-Standard\-Item $\ast$ $>$ $\ast$list, Q\-Dom\-Node doc)
+\begin{DoxyCompactList}\small\item\em Gets the list of parameters from a specific tag. \end{DoxyCompactList}\item 
+void \hyperlink{classMainWindow_a6ac713dd9f9fcee2b6d285bb0ae5d3d1}{add\-Column\-Model} (Q\-Standard\-Item\-Model $\ast$model, Q\-Dom\-Node doc)
+\begin{DoxyCompactList}\small\item\em Adds an empty column to a Q\-Standard\-Item\-Model for each attribute contained in the given node. \end{DoxyCompactList}\item 
+void \hyperlink{classMainWindow_ac886ea69c593b8906039e86a91697705}{height\-X\-M\-L} (Q\-Dom\-Node doc, int $\ast$height)
+\begin{DoxyCompactList}\small\item\em Gets the maximum height in the Q\-Dom\-Document recursively. \end{DoxyCompactList}\item 
+void \hyperlink{classMainWindow_ab1cd5d659de665dd74bb81eb8c8dbf5d}{nb\-Attributes\-Max} (Q\-Dom\-Node doc, int $\ast$nb\-Attributes)
+\begin{DoxyCompactList}\small\item\em Gets the number of attributes maximum for a tag in the Q\-Dom\-Document recursively. \end{DoxyCompactList}\item 
+void \hyperlink{classMainWindow_af34f3d4d5da8e2b7daf444e221809e0c}{get\-Tag\-List} (Q\-Dom\-Node doc, Q\-String\-List $\ast$tag\-List)
+\begin{DoxyCompactList}\small\item\em Gets the list of tags in the Q\-Dom\-Document recursively. \end{DoxyCompactList}\item 
+void \hyperlink{classMainWindow_a2988f42c5d8edc521b9368a61bd25677}{add\-Node} (Q\-String name\-Parent, Q\-String name\-Node, Q\-String text\-Node)
+\begin{DoxyCompactList}\small\item\em Adds a node to the given parent. \end{DoxyCompactList}\item 
+void \hyperlink{classMainWindow_a885f74bf6dbd209942899d3b2c50b5cd}{modify\-Node} (Q\-String node\-Selected, Q\-String new\-Name)
+\begin{DoxyCompactList}\small\item\em Modifies the node currently selected in the tree. \end{DoxyCompactList}\item 
+\hypertarget{classMainWindow_a832b124c66bb3cd641b7c6cea8b72a10}{void \hyperlink{classMainWindow_a832b124c66bb3cd641b7c6cea8b72a10}{clear\-Form\-Layout} ()}\label{classMainWindow_a832b124c66bb3cd641b7c6cea8b72a10}
+
+\begin{DoxyCompactList}\small\item\em Removes all items from the form\-Layout. \end{DoxyCompactList}\item 
+void \hyperlink{classMainWindow_aed133479c6ee8b81e351af9db464a9a7}{set\-Column\-Labels} (Q\-Standard\-Item\-Model $\ast$model)
+\begin{DoxyCompactList}\small\item\em Modifies the names of the columns by an empty String. \end{DoxyCompactList}\item 
+void \hyperlink{classMainWindow_a9c4f542263838b9ecd06eae839a42a34}{key\-Press\-Event} (Q\-Key\-Event $\ast$event)
+\begin{DoxyCompactList}\small\item\em Specifies that the user can press the key return to insert new parameters if a text edit is focused. \end{DoxyCompactList}\item 
+void \hyperlink{classMainWindow_a4e20a4a065fbb0e4d3532a45a0a91425}{close\-Event} (Q\-Close\-Event $\ast$event)
+\begin{DoxyCompactList}\small\item\em Checks if the user saved his files, if not, shows a dialog to notify the user that he didn't save the file. Also saves the window geometry using Q\-Settings object. \end{DoxyCompactList}\item 
+void \hyperlink{classMainWindow_a1ec3a16af19b96d0fd9cdf46cc892937}{set\-Settings} (Q\-String filename)
+\begin{DoxyCompactList}\small\item\em For now saves the recent files opened by the user using Q\-Settings object. Can be used for save more settings. \end{DoxyCompactList}\item 
+\hypertarget{classMainWindow_a596984787bd143548c5afac3cd582f1c}{void \hyperlink{classMainWindow_a596984787bd143548c5afac3cd582f1c}{update\-Menu\-Recent\-Files} ()}\label{classMainWindow_a596984787bd143548c5afac3cd582f1c}
+
+\begin{DoxyCompactList}\small\item\em Updates the recent files menu. \end{DoxyCompactList}\item 
+void \hyperlink{classMainWindow_a00e35cdb432258d1e72a880ec8dd29f0}{add\-Comment} (Q\-String name\-Parent, Q\-String comment, int selected\-Row)
+\begin{DoxyCompactList}\small\item\em Adds a comment after the selected node. \end{DoxyCompactList}\item 
+Q\-String \hyperlink{classMainWindow_a976df6253f65334c295d515405f49a2a}{get\-Settings\-File} ()
+\begin{DoxyCompactList}\small\item\em Return the name of the settings file associated to the application. \end{DoxyCompactList}\item 
+\hypertarget{classMainWindow_adb079736c866c781e030899cd83e82ca}{void \hyperlink{classMainWindow_adb079736c866c781e030899cd83e82ca}{update\-Tree} ()}\label{classMainWindow_adb079736c866c781e030899cd83e82ca}
+
+\begin{DoxyCompactList}\small\item\em Updates the tree. This function needs to be called if the user adds a parameter, delete a node, add a node, modify a node... \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classMainWindow_a35466a70ed47252a0191168126a352a5}{Ui\-::\-Main\-Window $\ast$ {\bfseries ui}}\label{classMainWindow_a35466a70ed47252a0191168126a352a5}
+
+\item 
+\hypertarget{classMainWindow_a53fd1e1d3acbd985e622f97003c20e4e}{Q\-String {\bfseries filename}}\label{classMainWindow_a53fd1e1d3acbd985e622f97003c20e4e}
+
+\item 
+\hypertarget{classMainWindow_ab95d2b324604f48a9b4599a0d69c135a}{Q\-String {\bfseries node\-Name}}\label{classMainWindow_ab95d2b324604f48a9b4599a0d69c135a}
+
+\item 
+\hypertarget{classMainWindow_a03a6f597bea79dd8e2dd74f3d0195f48}{Q\-String {\bfseries root}}\label{classMainWindow_a03a6f597bea79dd8e2dd74f3d0195f48}
+
+\item 
+\hypertarget{classMainWindow_ab41d081fd36048cdc7f0f7b6d9af4855}{Q\-Model\-Index {\bfseries current\-Index}}\label{classMainWindow_ab41d081fd36048cdc7f0f7b6d9af4855}
+
+\item 
+\hypertarget{classMainWindow_acf359550b2cb8095eaa5a3a87fa7f9f3}{Q\-Dom\-Document $\ast$ {\bfseries current\-Document}}\label{classMainWindow_acf359550b2cb8095eaa5a3a87fa7f9f3}
+
+\item 
+\hypertarget{classMainWindow_aa1a1f8ce9c37a7ac70d21402759638b3}{Q\-Standard\-Item\-Model $\ast$ {\bfseries model}}\label{classMainWindow_aa1a1f8ce9c37a7ac70d21402759638b3}
+
+\item 
+\hypertarget{classMainWindow_a47316d915f71d763479d846c24d79268}{Q\-List$<$ Q\-Widget $\ast$ $>$ {\bfseries list}}\label{classMainWindow_a47316d915f71d763479d846c24d79268}
+
+\item 
+\hypertarget{classMainWindow_ad0a212146dfe4452f07c574773e9082c}{Q\-List$<$ Q\-Push\-Button $\ast$ $>$ {\bfseries list\-Button}}\label{classMainWindow_ad0a212146dfe4452f07c574773e9082c}
+
+\item 
+\hypertarget{classMainWindow_a91f8d3559167d4b4cb30d3956dbd1eac}{Q\-List$<$ Q\-Layout $\ast$ $>$ {\bfseries list\-Layout}}\label{classMainWindow_a91f8d3559167d4b4cb30d3956dbd1eac}
+
+\item 
+\hypertarget{classMainWindow_a7d0d2546e92bafb61163812b2254de83}{Q\-Signal\-Mapper $\ast$ {\bfseries signal\-Mapper}}\label{classMainWindow_a7d0d2546e92bafb61163812b2254de83}
+
+\item 
+\hypertarget{classMainWindow_a2d4d28e971f741bdc7d6d0368ca4a503}{Q\-Clipboard $\ast$ {\bfseries clipboard}}\label{classMainWindow_a2d4d28e971f741bdc7d6d0368ca4a503}
+
+\item 
+\hypertarget{classMainWindow_a0bc74c3bb5204ac704e3b49551ba7e7e}{Q\-String\-List {\bfseries list\-Expanded}}\label{classMainWindow_a0bc74c3bb5204ac704e3b49551ba7e7e}
+
+\item 
+\hypertarget{classMainWindow_a3c243482183e39e41952044b97054d33}{bool {\bfseries file\-Saved}}\label{classMainWindow_a3c243482183e39e41952044b97054d33}
+
+\item 
+\hypertarget{classMainWindow_a87b5b9562fe91ee19249f5a0d7617ce0}{Q\-Settings {\bfseries settings}}\label{classMainWindow_a87b5b9562fe91ee19249f5a0d7617ce0}
+
+\item 
+\hypertarget{classMainWindow_a33c4f37d91dfcb191075b1f9de98a407}{Q\-Menu $\ast$ {\bfseries menu\-Recent\-Files}}\label{classMainWindow_a33c4f37d91dfcb191075b1f9de98a407}
+
+\item 
+\hypertarget{classMainWindow_ab46d72b4942ac8270ea113df0c5d12e9}{bool {\bfseries model\-Is\-Set}}\label{classMainWindow_ab46d72b4942ac8270ea113df0c5d12e9}
+
+\item 
+\hypertarget{classMainWindow_a16d41d6fadc8befa5afa12460580334a}{Q\-Grid\-Layout $\ast$ {\bfseries grid\-Layout}}\label{classMainWindow_a16d41d6fadc8befa5afa12460580334a}
+
+\item 
+\hypertarget{classMainWindow_a90866e624993aa14910a2c66eb2272d4}{Q\-Tree\-View $\ast$ {\bfseries tree\-View}}\label{classMainWindow_a90866e624993aa14910a2c66eb2272d4}
+
+\item 
+\hypertarget{classMainWindow_a9d53657ebe6ee2f3051520304b495f52}{Q\-Text\-Edit $\ast$ {\bfseries text\-Result}}\label{classMainWindow_a9d53657ebe6ee2f3051520304b495f52}
+
+\item 
+\hypertarget{classMainWindow_a3a8f2713f53485c32f3e4d08b0740e09}{Q\-Push\-Button $\ast$ {\bfseries button\-Save}}\label{classMainWindow_a3a8f2713f53485c32f3e4d08b0740e09}
+
+\item 
+\hypertarget{classMainWindow_ab0826d7f35af5835844ab2028080e102}{Q\-Push\-Button $\ast$ {\bfseries button\-Exec}}\label{classMainWindow_ab0826d7f35af5835844ab2028080e102}
+
+\item 
+\hypertarget{classMainWindow_ae0a75bbbae685e3a6c36e24571e4ef56}{Q\-Push\-Button $\ast$ {\bfseries button\-Add\-Param}}\label{classMainWindow_ae0a75bbbae685e3a6c36e24571e4ef56}
+
+\item 
+\hypertarget{classMainWindow_ad7b85d9b1021e56de3dd061541d0a9f2}{Q\-Push\-Button $\ast$ {\bfseries button\-Insert}}\label{classMainWindow_ad7b85d9b1021e56de3dd061541d0a9f2}
+
+\item 
+\hypertarget{classMainWindow_a1cff650d7154e197cac5c2c6928cc404}{Q\-Form\-Layout $\ast$ {\bfseries form\-Layout}}\label{classMainWindow_a1cff650d7154e197cac5c2c6928cc404}
+
+\item 
+\hypertarget{classMainWindow_a89e281849b9cf7d03662402c6bc6012c}{Q\-Label $\ast$ {\bfseries label}}\label{classMainWindow_a89e281849b9cf7d03662402c6bc6012c}
+
+\item 
+\hypertarget{classMainWindow_aeaa79ec646e5180f0933332eee711d41}{Q\-Push\-Button $\ast$ {\bfseries button\-Clear}}\label{classMainWindow_aeaa79ec646e5180f0933332eee711d41}
+
+\item 
+\hypertarget{classMainWindow_a82b8cf27f799696be731caf0850bd4be}{Q\-Push\-Button $\ast$ {\bfseries button\-Copy}}\label{classMainWindow_a82b8cf27f799696be731caf0850bd4be}
+
+\item 
+\hypertarget{classMainWindow_afd6c41d06a82259f974595df3970abc5}{Q\-Scroll\-Area $\ast$ {\bfseries scroll\-Container}}\label{classMainWindow_afd6c41d06a82259f974595df3970abc5}
+
+\item 
+\hypertarget{classMainWindow_ae35513d881514a697aadf7437df70d2b}{Q\-Widget $\ast$ {\bfseries scrollable\-Widget}}\label{classMainWindow_ae35513d881514a697aadf7437df70d2b}
+
+\item 
+\hypertarget{classMainWindow_a392fb761a37795ee8081438c8c3493dd}{Q\-Splitter $\ast$ {\bfseries splitter}}\label{classMainWindow_a392fb761a37795ee8081438c8c3493dd}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \hyperlink{classMainWindow}{Main\-Window} class manages all the user interface. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classMainWindow_a8b244be8b7b7db1b08de2a2acb9409db}{\index{Main\-Window@{Main\-Window}!Main\-Window@{Main\-Window}}
+\index{Main\-Window@{Main\-Window}!MainWindow@{Main\-Window}}
+\subsubsection[{Main\-Window}]{\setlength{\rightskip}{0pt plus 5cm}Main\-Window\-::\-Main\-Window (
+\begin{DoxyParamCaption}
+\item[{Q\-Widget $\ast$}]{parent = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [explicit]}}}\label{classMainWindow_a8b244be8b7b7db1b08de2a2acb9409db}
+
+
+\hyperlink{classMainWindow}{Main\-Window}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parent} & \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classMainWindow_a6ac713dd9f9fcee2b6d285bb0ae5d3d1}{\index{Main\-Window@{Main\-Window}!add\-Column\-Model@{add\-Column\-Model}}
+\index{add\-Column\-Model@{add\-Column\-Model}!MainWindow@{Main\-Window}}
+\subsubsection[{add\-Column\-Model}]{\setlength{\rightskip}{0pt plus 5cm}void Main\-Window\-::add\-Column\-Model (
+\begin{DoxyParamCaption}
+\item[{Q\-Standard\-Item\-Model $\ast$}]{model, }
+\item[{Q\-Dom\-Node}]{doc}
+\end{DoxyParamCaption}
+)}}\label{classMainWindow_a6ac713dd9f9fcee2b6d285bb0ae5d3d1}
+
+
+Adds an empty column to a Q\-Standard\-Item\-Model for each attribute contained in the given node. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em model} & The model on which you want to add a column \\
+\hline
+{\em doc} & A node \\
+\hline
+\end{DoxyParams}
+\hypertarget{classMainWindow_a00e35cdb432258d1e72a880ec8dd29f0}{\index{Main\-Window@{Main\-Window}!add\-Comment@{add\-Comment}}
+\index{add\-Comment@{add\-Comment}!MainWindow@{Main\-Window}}
+\subsubsection[{add\-Comment}]{\setlength{\rightskip}{0pt plus 5cm}void Main\-Window\-::add\-Comment (
+\begin{DoxyParamCaption}
+\item[{Q\-String}]{name\-Parent, }
+\item[{Q\-String}]{comment, }
+\item[{int}]{selected\-Row}
+\end{DoxyParamCaption}
+)}}\label{classMainWindow_a00e35cdb432258d1e72a880ec8dd29f0}
+
+
+Adds a comment after the selected node. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name\-Parent} & The name of the parent of the node selected \\
+\hline
+{\em comment} & The comment to add \\
+\hline
+{\em selected\-Row} & The row number of the slected node \\
+\hline
+\end{DoxyParams}
+\hypertarget{classMainWindow_a2988f42c5d8edc521b9368a61bd25677}{\index{Main\-Window@{Main\-Window}!add\-Node@{add\-Node}}
+\index{add\-Node@{add\-Node}!MainWindow@{Main\-Window}}
+\subsubsection[{add\-Node}]{\setlength{\rightskip}{0pt plus 5cm}void Main\-Window\-::add\-Node (
+\begin{DoxyParamCaption}
+\item[{Q\-String}]{name\-Parent, }
+\item[{Q\-String}]{name\-Node, }
+\item[{Q\-String}]{text\-Node}
+\end{DoxyParamCaption}
+)}}\label{classMainWindow_a2988f42c5d8edc521b9368a61bd25677}
+
+
+Adds a node to the given parent. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name\-Parent} & The tag name of the parent \\
+\hline
+{\em name\-Node} & The tag name of the node to add \\
+\hline
+{\em text\-Node} & The text to insert in the node \\
+\hline
+\end{DoxyParams}
+\hypertarget{classMainWindow_acdc6db8778f0183a241c92dae9f138f0}{\index{Main\-Window@{Main\-Window}!build\-Tree@{build\-Tree}}
+\index{build\-Tree@{build\-Tree}!MainWindow@{Main\-Window}}
+\subsubsection[{build\-Tree}]{\setlength{\rightskip}{0pt plus 5cm}void Main\-Window\-::build\-Tree (
+\begin{DoxyParamCaption}
+\item[{Q\-Dom\-Node}]{doc, }
+\item[{Q\-Standard\-Item\-Model $\ast$}]{model, }
+\item[{Q\-Standard\-Item $\ast$}]{item, }
+\item[{Q\-List$<$ int $>$ $\ast$}]{nb\-Children, }
+\item[{int}]{child\-Number, }
+\item[{Q\-List$<$ int $>$ $\ast$}]{current\-Child, }
+\item[{int}]{current\-Level}
+\end{DoxyParamCaption}
+)}}\label{classMainWindow_acdc6db8778f0183a241c92dae9f138f0}
+
+
+Generates a Q\-Standard\-Item\-Model recursively from a Q\-Dom\-Document. This model can be used by a Tree\-View. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em doc} & A Q\-Dom\-Node containing the root of your Q\-Dom\-Document \\
+\hline
+{\em model} & An empty Q\-Standard\-Item\-Model \\
+\hline
+{\em item} & A Q\-Standard\-Item containing a Q\-String which is the tag name of the root \\
+\hline
+{\em nb\-Children} & A list containing only zeros. Its length must be equals to the maximum height of the Q\-Dom\-Document \\
+\hline
+{\em child\-Number} & Must be 0 for the first call. \\
+\hline
+{\em current\-Child} & A list containing only zeros. Its length must be equals to the maximum height of the Q\-Dom\-Document \\
+\hline
+{\em current\-Level} & Must be -\/1 for the first call. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classMainWindow_a4e20a4a065fbb0e4d3532a45a0a91425}{\index{Main\-Window@{Main\-Window}!close\-Event@{close\-Event}}
+\index{close\-Event@{close\-Event}!MainWindow@{Main\-Window}}
+\subsubsection[{close\-Event}]{\setlength{\rightskip}{0pt plus 5cm}void Main\-Window\-::close\-Event (
+\begin{DoxyParamCaption}
+\item[{Q\-Close\-Event $\ast$}]{event}
+\end{DoxyParamCaption}
+)}}\label{classMainWindow_a4e20a4a065fbb0e4d3532a45a0a91425}
+
+
+Checks if the user saved his files, if not, shows a dialog to notify the user that he didn't save the file. Also saves the window geometry using Q\-Settings object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em event} & \\
+\hline
+\end{DoxyParams}
+\hypertarget{classMainWindow_a7ead9d2b3de68f8ca35c3c4234c3316b}{\index{Main\-Window@{Main\-Window}!delete\-Attribute@{delete\-Attribute}}
+\index{delete\-Attribute@{delete\-Attribute}!MainWindow@{Main\-Window}}
+\subsubsection[{delete\-Attribute}]{\setlength{\rightskip}{0pt plus 5cm}void Main\-Window\-::delete\-Attribute (
+\begin{DoxyParamCaption}
+\item[{Q\-String}]{name\-Attribute}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [slot]}}}\label{classMainWindow_a7ead9d2b3de68f8ca35c3c4234c3316b}
+
+
+Delete a given attribute from a node. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name\-Attribute} & The name of the attribute to delete. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classMainWindow_a976df6253f65334c295d515405f49a2a}{\index{Main\-Window@{Main\-Window}!get\-Settings\-File@{get\-Settings\-File}}
+\index{get\-Settings\-File@{get\-Settings\-File}!MainWindow@{Main\-Window}}
+\subsubsection[{get\-Settings\-File}]{\setlength{\rightskip}{0pt plus 5cm}Q\-String Main\-Window\-::get\-Settings\-File (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classMainWindow_a976df6253f65334c295d515405f49a2a}
+
+
+Return the name of the settings file associated to the application. 
+
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\hypertarget{classMainWindow_af90fffcac39eb4bc42810588408111c3}{\index{Main\-Window@{Main\-Window}!get\-Tag\-Attributes@{get\-Tag\-Attributes}}
+\index{get\-Tag\-Attributes@{get\-Tag\-Attributes}!MainWindow@{Main\-Window}}
+\subsubsection[{get\-Tag\-Attributes}]{\setlength{\rightskip}{0pt plus 5cm}void Main\-Window\-::get\-Tag\-Attributes (
+\begin{DoxyParamCaption}
+\item[{Q\-List$<$ Q\-Standard\-Item $\ast$ $>$ $\ast$}]{list, }
+\item[{Q\-Dom\-Node}]{doc}
+\end{DoxyParamCaption}
+)}}\label{classMainWindow_af90fffcac39eb4bc42810588408111c3}
+
+
+Gets the list of parameters from a specific tag. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em list} & Contains the outpout \\
+\hline
+{\em doc} & The node from which you want to get the list of attributes \\
+\hline
+\end{DoxyParams}
+\hypertarget{classMainWindow_af34f3d4d5da8e2b7daf444e221809e0c}{\index{Main\-Window@{Main\-Window}!get\-Tag\-List@{get\-Tag\-List}}
+\index{get\-Tag\-List@{get\-Tag\-List}!MainWindow@{Main\-Window}}
+\subsubsection[{get\-Tag\-List}]{\setlength{\rightskip}{0pt plus 5cm}void Main\-Window\-::get\-Tag\-List (
+\begin{DoxyParamCaption}
+\item[{Q\-Dom\-Node}]{doc, }
+\item[{Q\-String\-List $\ast$}]{tag\-List}
+\end{DoxyParamCaption}
+)}}\label{classMainWindow_af34f3d4d5da8e2b7daf444e221809e0c}
+
+
+Gets the list of tags in the Q\-Dom\-Document recursively. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em doc} & The root of the document \\
+\hline
+{\em tag\-List} & An empty Q\-String\-List. Contains the output \\
+\hline
+\end{DoxyParams}
+\hypertarget{classMainWindow_ac886ea69c593b8906039e86a91697705}{\index{Main\-Window@{Main\-Window}!height\-X\-M\-L@{height\-X\-M\-L}}
+\index{height\-X\-M\-L@{height\-X\-M\-L}!MainWindow@{Main\-Window}}
+\subsubsection[{height\-X\-M\-L}]{\setlength{\rightskip}{0pt plus 5cm}void Main\-Window\-::height\-X\-M\-L (
+\begin{DoxyParamCaption}
+\item[{Q\-Dom\-Node}]{doc, }
+\item[{int $\ast$}]{height}
+\end{DoxyParamCaption}
+)}}\label{classMainWindow_ac886ea69c593b8906039e86a91697705}
+
+
+Gets the maximum height in the Q\-Dom\-Document recursively. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em doc} & The root of the document \\
+\hline
+{\em height} & Must be 0 for the first call. Contains the output \\
+\hline
+\end{DoxyParams}
+\hypertarget{classMainWindow_a9c4f542263838b9ecd06eae839a42a34}{\index{Main\-Window@{Main\-Window}!key\-Press\-Event@{key\-Press\-Event}}
+\index{key\-Press\-Event@{key\-Press\-Event}!MainWindow@{Main\-Window}}
+\subsubsection[{key\-Press\-Event}]{\setlength{\rightskip}{0pt plus 5cm}void Main\-Window\-::key\-Press\-Event (
+\begin{DoxyParamCaption}
+\item[{Q\-Key\-Event $\ast$}]{event}
+\end{DoxyParamCaption}
+)}}\label{classMainWindow_a9c4f542263838b9ecd06eae839a42a34}
+
+
+Specifies that the user can press the key return to insert new parameters if a text edit is focused. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em event} & \\
+\hline
+\end{DoxyParams}
+\hypertarget{classMainWindow_a885f74bf6dbd209942899d3b2c50b5cd}{\index{Main\-Window@{Main\-Window}!modify\-Node@{modify\-Node}}
+\index{modify\-Node@{modify\-Node}!MainWindow@{Main\-Window}}
+\subsubsection[{modify\-Node}]{\setlength{\rightskip}{0pt plus 5cm}void Main\-Window\-::modify\-Node (
+\begin{DoxyParamCaption}
+\item[{Q\-String}]{node\-Selected, }
+\item[{Q\-String}]{new\-Name}
+\end{DoxyParamCaption}
+)}}\label{classMainWindow_a885f74bf6dbd209942899d3b2c50b5cd}
+
+
+Modifies the node currently selected in the tree. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em node\-Selected} & The name of the node selected \\
+\hline
+{\em new\-Name} & The new name of the node \\
+\hline
+\end{DoxyParams}
+\hypertarget{classMainWindow_ab1cd5d659de665dd74bb81eb8c8dbf5d}{\index{Main\-Window@{Main\-Window}!nb\-Attributes\-Max@{nb\-Attributes\-Max}}
+\index{nb\-Attributes\-Max@{nb\-Attributes\-Max}!MainWindow@{Main\-Window}}
+\subsubsection[{nb\-Attributes\-Max}]{\setlength{\rightskip}{0pt plus 5cm}void Main\-Window\-::nb\-Attributes\-Max (
+\begin{DoxyParamCaption}
+\item[{Q\-Dom\-Node}]{doc, }
+\item[{int $\ast$}]{nb\-Attributes}
+\end{DoxyParamCaption}
+)}}\label{classMainWindow_ab1cd5d659de665dd74bb81eb8c8dbf5d}
+
+
+Gets the number of attributes maximum for a tag in the Q\-Dom\-Document recursively. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em doc} & The root of the document \\
+\hline
+{\em nb\-Attributes} & Must be 0 for the first call. Contains the output \\
+\hline
+\end{DoxyParams}
+\hypertarget{classMainWindow_a39b737ba3023be40c3c8c03a264934b2}{\index{Main\-Window@{Main\-Window}!open\-Datas@{open\-Datas}}
+\index{open\-Datas@{open\-Datas}!MainWindow@{Main\-Window}}
+\subsubsection[{open\-Datas}]{\setlength{\rightskip}{0pt plus 5cm}void Main\-Window\-::open\-Datas (
+\begin{DoxyParamCaption}
+\item[{Q\-String}]{file\-Name}
+\end{DoxyParamCaption}
+)}}\label{classMainWindow_a39b737ba3023be40c3c8c03a264934b2}
+
+
+Opens the X\-M\-L file containing the datas needed to execute the O\-F\-E\-L\-I program and generate the tree associated. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\-Name} & A Q\-String containing the path to the X\-M\-L file \\
+\hline
+\end{DoxyParams}
+\hypertarget{classMainWindow_aed133479c6ee8b81e351af9db464a9a7}{\index{Main\-Window@{Main\-Window}!set\-Column\-Labels@{set\-Column\-Labels}}
+\index{set\-Column\-Labels@{set\-Column\-Labels}!MainWindow@{Main\-Window}}
+\subsubsection[{set\-Column\-Labels}]{\setlength{\rightskip}{0pt plus 5cm}void Main\-Window\-::set\-Column\-Labels (
+\begin{DoxyParamCaption}
+\item[{Q\-Standard\-Item\-Model $\ast$}]{model}
+\end{DoxyParamCaption}
+)}}\label{classMainWindow_aed133479c6ee8b81e351af9db464a9a7}
+
+
+Modifies the names of the columns by an empty String. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em model} & \\
+\hline
+\end{DoxyParams}
+\hypertarget{classMainWindow_a1ec3a16af19b96d0fd9cdf46cc892937}{\index{Main\-Window@{Main\-Window}!set\-Settings@{set\-Settings}}
+\index{set\-Settings@{set\-Settings}!MainWindow@{Main\-Window}}
+\subsubsection[{set\-Settings}]{\setlength{\rightskip}{0pt plus 5cm}void Main\-Window\-::set\-Settings (
+\begin{DoxyParamCaption}
+\item[{Q\-String}]{filename}
+\end{DoxyParamCaption}
+)}}\label{classMainWindow_a1ec3a16af19b96d0fd9cdf46cc892937}
+
+
+For now saves the recent files opened by the user using Q\-Settings object. Can be used for save more settings. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & \\
+\hline
+\end{DoxyParams}
+\hypertarget{classMainWindow_a91bb6afc2332387aabd2c56a060cea2e}{\index{Main\-Window@{Main\-Window}!show\-Details@{show\-Details}}
+\index{show\-Details@{show\-Details}!MainWindow@{Main\-Window}}
+\subsubsection[{show\-Details}]{\setlength{\rightskip}{0pt plus 5cm}void Main\-Window\-::show\-Details (
+\begin{DoxyParamCaption}
+\item[{Q\-Model\-Index}]{index}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [slot]}}}\label{classMainWindow_a91bb6afc2332387aabd2c56a060cea2e}
+
+
+Shows the list of editables elements for the node slected. Informations are shown in the right part of the window. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & Index of the node selected in the tree \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+mainwindow.\-h\item 
+mainwindow.\-cpp\end{DoxyCompactItemize}

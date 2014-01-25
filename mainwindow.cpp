@@ -2,9 +2,9 @@
 #include "dialogexec.h"
 #include "dialogaddnode.h"
 #include "dialogmodifynode.h"
+#include "dialogsave.h"
 #include "ui_mainwindow.h"
-#include <iostream>
-#include <QComboBox>
+#include "dialogaddcomment.h"
 
 using namespace std;
 
@@ -13,23 +13,88 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    QCoreApplication::setOrganizationName("OFELI");
+    QCoreApplication::setApplicationName("GUI_OFELI");
 
-    ui->formLayout->setContentsMargins(5,30,5,10);
-    ui->buttonAddParam->hide();
-    ui->buttonValidate->hide();
+    modelIsSet = false;
+    menuRecentFiles = new QMenu();
+    updateMenuRecentFiles();
+
+    gridLayout = new QGridLayout(ui->centralWidget);
+    gridLayout->setSpacing(6);
+    gridLayout->setContentsMargins(11, 11, 11, 11);
+
+    treeView = new QTreeView(ui->centralWidget);
+
+    textResult = new QTextEdit(ui->centralWidget);
+    textResult->setReadOnly(true);
+
+    buttonSave = new QPushButton(ui->centralWidget);
+    buttonSave->setText("Save");
+
+    buttonExec = new QPushButton(ui->centralWidget);
+    buttonExec->setText("Execute");
+
+    buttonAddParam = new QPushButton(ui->centralWidget);
+    buttonAddParam->setText("Add parameter");
+    buttonAddParam->hide();
+
+    buttonInsert = new QPushButton(ui->centralWidget);
+    buttonInsert->setText("Insert");
+    buttonInsert->hide();
+
+    formLayout = new QFormLayout();
+    formLayout->setContentsMargins(5,30,5,10);
+
+    scrollContainer = new QScrollArea();
+    scrollableWidget = new QWidget();
+    scrollableWidget->setLayout(formLayout);
+    scrollContainer->setWidget(scrollableWidget);
+    scrollContainer->setWidgetResizable(true);
+
+    label = new QLabel(ui->centralWidget);
+    formLayout->addWidget(label);
+
+    buttonClear = new QPushButton(ui->centralWidget);
+    buttonClear->setText("Clear");
+
+    buttonCopy = new QPushButton(ui->centralWidget);
+    buttonCopy->setText("Copy to clipboard");
+
+    splitter = new QSplitter(ui->centralWidget);
+    splitter->setOrientation(Qt::Vertical);
+    splitter->addWidget(treeView);
+    splitter->addWidget(textResult);
+
+    gridLayout->addWidget(splitter, 0, 0, 3, 4);
+    gridLayout->addWidget(scrollContainer, 0, 4, 2, 2);
+    gridLayout->addWidget(buttonAddParam, 2, 4);
+    gridLayout->addWidget(buttonInsert, 2, 5);
+    gridLayout->addWidget(buttonSave, 6, 4);
+    gridLayout->addWidget(buttonExec, 6, 5);
+    gridLayout->addWidget(buttonClear, 6, 0);
+    gridLayout->addWidget(buttonCopy, 6, 1);
 
     signalMapper = new QSignalMapper(this);
 
+    clipboard = QApplication::clipboard();
+
+    fileSaved = true;
+
     QObject::connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(selectFile()));
-    QObject::connect(ui->actionSave_File, SIGNAL(triggered()), this, SLOT(saveFile()));
+    QObject::connect(ui->actionSave_File, SIGNAL(triggered()), this, SLOT(saveFileAs()));
+    QObject::connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveFile()));
     QObject::connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
-    QObject::connect(ui->buttonSave, SIGNAL(clicked()), this, SLOT(saveFile()));
-    QObject::connect(ui->buttonExec, SIGNAL(clicked()), this, SLOT(executable()));
-    QObject::connect(ui->buttonAddParam, SIGNAL(clicked()), this, SLOT(addParam()));
-    QObject::connect(ui->buttonValidate, SIGNAL(clicked()), this, SLOT(validate()));
+    QObject::connect(buttonSave, SIGNAL(clicked()), this, SLOT(saveFile()));
+    QObject::connect(buttonExec, SIGNAL(clicked()), this, SLOT(executable()));
+    QObject::connect(buttonAddParam, SIGNAL(clicked()), this, SLOT(addParam()));
+    QObject::connect(buttonInsert, SIGNAL(clicked()), this, SLOT(insert()));
     QObject::connect(ui->actionAdd_node, SIGNAL(triggered()), this, SLOT(openWindowAddNode()));
     QObject::connect(ui->actionDelete_selected_node, SIGNAL(triggered()), this, SLOT(deleteSelectedNode()));
     QObject::connect(ui->actionModifySelectedNode, SIGNAL(triggered()), this, SLOT(openWindowModifyNode()));
+    QObject::connect(buttonClear, SIGNAL(clicked()), this, SLOT(clearResult()));
+    QObject::connect(buttonCopy, SIGNAL(clicked()), this, SLOT(copyToClipboard()));
+    QObject::connect(ui->actionAdd_Comment, SIGNAL(triggered()), this, SLOT(openWindowAddComment()));
 }
 
 MainWindow::~MainWindow()
@@ -37,7 +102,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-int MainWindow::openDatas(QString filename)
+void MainWindow::openDatas(QString filename)
 {
     QStandardItemModel *model = new QStandardItemModel;
 
@@ -49,7 +114,8 @@ int MainWindow::openDatas(QString filename)
     int height = 0;
 
     //open the selected file and get the xml document in doc
-    fichier.open(QIODevice::ReadOnly | QIODevice::Text);
+    fichier.open(QIODevice::ReadWrite | QIODevice::Text);
+
     doc->setContent(&fichier);
     currentDocument = doc;
     fichier.close();
@@ -68,11 +134,24 @@ int MainWindow::openDatas(QString filename)
     //build the model and use it to be displayed using a QTreeView
     buildTree(elem, model, new QStandardItem(elem.tagName()), nodesLength, 0, currentChild, -1);
 
-    this->model = model;
-    ui->treeView->setModel(model);
+    //Modify the columns' headers
+    setColumnLabels(model);
 
-    QObject::connect(ui->treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(showDetails(QModelIndex)));
-    return 0;
+    this->model = model;
+    this->modelIsSet = true;
+
+    //set the to the tree
+    treeView->setModel(model);
+    treeView->expandAll();
+    for(int i = 0; i < model->columnCount(); i++)
+    {
+        treeView->resizeColumnToContents(i);
+    }
+
+    //Store the filename for the menu "Recent files"
+    setSettings(filename);
+    updateMenuRecentFiles();
+    QObject::connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(showDetails(QModelIndex)));
 }
 
 void MainWindow::buildTree(QDomNode doc, QStandardItemModel* model, QStandardItem *item, QList<int> *nbChildren, int childNumber, QList<int> *currentChild, int currentLevel)
@@ -97,48 +176,32 @@ void MainWindow::buildTree(QDomNode doc, QStandardItemModel* model, QStandardIte
         //append everything but root to model
         else
         {
-            //get the parent to the node we want to add to the model
-            for(int i = 0; i < currentLevel; i++)
+            if(!doc.isComment())
             {
-                itemUpdated = itemUpdated->child(currentChild->at(i));
-            }
-
-            QList<QStandardItem*> list;
-            //add the number of column needed to the model so we are able to add new column to the children
-            if(doc.attributes().length()+2 > model->columnCount())
-            {
-                for(int i = 0; i <= doc.attributes().length()-model->columnCount(); i++)
+                //get the parent to the node we want to add to the model
+                QList<QStandardItem*> list;
+                for(int i = 0; i < currentLevel; i++)
                 {
-                    list.append(new QStandardItem(""));
+                    itemUpdated = itemUpdated->child(currentChild->at(i));
                 }
-                model->appendColumn(list);
-                list.clear();
-            }
+                addColumnModel(model, doc);
 
-            //add the tag's name in the list
-            list.append(new QStandardItem(doc.toElement().tagName()));
+                getTagAttributes(&list, doc);
 
-            //if the node doesn't have any children, it means there is a value inside the node, we had this value in the list here
-            if(!doc.childNodes().item(0).isElement() && doc.hasChildNodes())
-            {
-                list.append(new QStandardItem(doc.toElement().text()));
+                //append the list
+                itemUpdated->appendRow(list);
             }
-            //if the node have at least one child, there is no value inside the node so we just had an empty string to the list
             else
             {
-                list.append(new QStandardItem(""));
+                for(int i = 0; i < currentLevel; i++)
+                {
+                    itemUpdated = itemUpdated->child(currentChild->at(i));
+                }
+                itemUpdated->appendRow(new QStandardItem("(Comment) " + doc.nodeValue()));
             }
-            //add all the attributes to the list
-            for(int i = 0; i < doc.attributes().length(); i++)
-            {
-                list.append(new QStandardItem(doc.attributes().item(i).toAttr().name() + " : " + doc.attributes().item(i).toAttr().value()));
-            }
-
-            //append the list
-            itemUpdated->appendRow(list);
         }
         //if the node has at least one child get all the children and add them to the model
-        if(!doc.childNodes().isEmpty() && doc.firstChild().toElement().tagName() != "")
+        if(!doc.childNodes().isEmpty() && (doc.firstChild().toElement().tagName() != "" || doc.firstChild().isComment()))
         {
             //get the children
             QDomNodeList nodeList = doc.childNodes();
@@ -146,14 +209,14 @@ void MainWindow::buildTree(QDomNode doc, QStandardItemModel* model, QStandardIte
             currentLevel++;
             (*nbChildren)[currentLevel] = nodeList.length();
 
-            //for each child add the chils and its children to the model
+            //for each child add the child and its children to the model
             for(int i = 0; i < (*nbChildren)[currentLevel]; i++)
             {
                 (*currentChild)[currentLevel] = i;
                 buildTree(nodeList.at(i), model, item, nbChildren, i, currentChild, currentLevel);
             }
         }
-        //if the current node doesn't have children the previous level need to be updated
+        //if the current node doesn't have any children the previous level need to be updated
         else
         {
             //the level which must be updated is the first one which is not equal to the
@@ -175,6 +238,44 @@ void MainWindow::buildTree(QDomNode doc, QStandardItemModel* model, QStandardIte
     }
 }
 
+void MainWindow::getTagAttributes(QList<QStandardItem*> *list, QDomNode doc)
+{
+    //add the tag's name in the list
+    list->append(new QStandardItem(doc.toElement().tagName()));
+
+    //if the node doesn't have any children, it means there is a value inside the node, we add this value in the list here
+    if((!doc.childNodes().item(0).isElement() && doc.hasChildNodes()) && !doc.childNodes().item(0).isComment())
+    {
+        list->append(new QStandardItem(doc.toElement().text()));
+    }
+    //if the node have at least one child, there is no value inside the node so we just had an empty string to the list
+    else
+    {
+        list->append(new QStandardItem(""));
+    }
+    //add all the attributes to the list
+    for(int i = 0; i < doc.attributes().length(); i++)
+    {
+        list->append(new QStandardItem(doc.attributes().item(i).toAttr().name() + " : " + doc.attributes().item(i).toAttr().value()));
+    }
+}
+
+void MainWindow::addColumnModel(QStandardItemModel *model, QDomNode doc)
+{
+    QList<QStandardItem*> list;
+
+    //add the number of column needed to the model so we are able to add new column to the children
+    if(doc.attributes().length()+2 > model->columnCount())
+    {
+        for(int i = 0; i <= doc.attributes().length()-model->columnCount(); i++)
+        {
+            list.append(new QStandardItem(""));
+        }
+        model->appendColumn(list);
+        list.clear();
+    }
+}
+
 void MainWindow::heightXML(QDomNode doc, int *height)
 {
     if(!doc.isNull())
@@ -190,7 +291,7 @@ void MainWindow::heightXML(QDomNode doc, int *height)
         {
             *height = heightCurrentNode;
         }
-        if(!doc.childNodes().isEmpty() && doc.firstChild().toElement().tagName() != "")
+        if(!doc.childNodes().isEmpty() && (doc.firstChild().toElement().tagName() != "" || doc.firstChild().isComment()))
         {
             QDomNodeList nodeList = doc.childNodes();
 
@@ -211,7 +312,7 @@ void MainWindow::nbAttributesMax(QDomNode doc, int *nbAttributes)
             *nbAttributes = doc.attributes().length();
         }
 
-        if(!doc.childNodes().isEmpty() && doc.firstChild().toElement().tagName() != "")
+        if(!doc.childNodes().isEmpty() && (doc.firstChild().toElement().tagName() != "" || doc.firstChild().isComment()))
         {
             QDomNodeList nodeList = doc.childNodes();
 
@@ -229,7 +330,7 @@ void MainWindow::getTagList(QDomNode doc, QStringList *tagList)
     {
         tagList->append(doc.toElement().tagName());
 
-        if(!doc.childNodes().isEmpty() && doc.firstChild().toElement().tagName() != "")
+        if(!doc.childNodes().isEmpty() && (doc.firstChild().toElement().tagName() != "" || doc.firstChild().isComment()))
         {
             QDomNodeList nodeList = doc.childNodes();
 
@@ -243,45 +344,42 @@ void MainWindow::getTagList(QDomNode doc, QStringList *tagList)
 
 void MainWindow::addNode(QString nameParent, QString nameNode, QString textNode)
 {
-    QStandardItemModel *modelUpdated = new QStandardItemModel();
-    int height = 0;
-    QList<int> *currentChild = new QList<int>();
-    QList<int> *nodesLength = new QList<int>();
-
     currentDocument->elementsByTagName(nameParent).item(0).appendChild((new QDomDocument())->createElement(nameNode));
     currentDocument->elementsByTagName(nameParent).item(0).lastChild().appendChild((new QDomDocument())->createTextNode(textNode));
 
-    heightXML(currentDocument->documentElement(), &height);
-    for(int i = 0; i < height-1; i++)
-    {
-        currentChild->append(0);
-        nodesLength->append(0);
-    }
+    updateTree();
+}
 
-    buildTree(currentDocument->documentElement(), modelUpdated, new QStandardItem(currentDocument->documentElement().tagName()), nodesLength, 0, currentChild, -1);
-    model = modelUpdated;
-    ui->treeView->setModel(model);
+void MainWindow::addComment(QString nameParent, QString comment, int selectedRow)
+{
+    currentDocument->elementsByTagName(nameParent).item(0).insertAfter((new QDomDocument())->createComment(comment), currentDocument->elementsByTagName(nameParent).item(0).childNodes().item(selectedRow));
+
+    updateTree();
 }
 
 void MainWindow::modifyNode(QString nodeSelected, QString newName)
 {
-    QStandardItemModel *modelUpdated = new QStandardItemModel();
-    int height = 0;
-    QList<int> *currentChild = new QList<int>();
-    QList<int> *nodesLength = new QList<int>();
-
-    currentDocument->elementsByTagName(nodeSelected).item(0).toElement().setTagName(newName);
-
-    heightXML(currentDocument->documentElement(), &height);
-    for(int i = 0; i < height-1; i++)
+    if(modelIsSet && currentIndex.isValid())
     {
-        currentChild->append(0);
-        nodesLength->append(0);
-    }
+        //the function elementsByTagName returns a list, so to get the good index in this list we need to count how many nodes
+        //have a tag different from the one which is selected
+        int countDiff = 0;
 
-    buildTree(currentDocument->documentElement(), modelUpdated, new QStandardItem(currentDocument->documentElement().tagName()), nodesLength, 0, currentChild, -1);
-    model = modelUpdated;
-    ui->treeView->setModel(model);
+        for(int i = 1; i <= treeView->currentIndex().row(); i++)
+        {
+            if(model->itemFromIndex(treeView->currentIndex().sibling(treeView->currentIndex().row()-i,0))->text() != model->itemFromIndex(treeView->currentIndex().sibling(treeView->currentIndex().row(),0))->text())
+            {
+                countDiff++;
+            }
+        }
+        if(root == nodeSelected)
+        {
+            root = newName;
+        }
+        currentDocument->elementsByTagName(nodeSelected).item(treeView->currentIndex().row() - countDiff).toElement().setTagName(newName);
+
+        updateTree();
+    }
 }
 
 void MainWindow:: clearFormLayout()
@@ -310,7 +408,122 @@ void MainWindow:: clearFormLayout()
         }
         listButton.clear();
     }
-    ui->label->setText("");
+    label->setText("");
+}
+
+void MainWindow::setColumnLabels(QStandardItemModel *model)
+{
+    QStringList columnLabels;
+    for(int i = 0; i < model->columnCount(); i++)
+    {
+        columnLabels.append("");
+    }
+    model->setHorizontalHeaderLabels(columnLabels);
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if(!list.isEmpty())
+    {
+        //call the function insert() when the key Return is pressed and a text edit is focused
+        if(event->key() == Qt::Key_Return)
+        {
+            bool listFocused = false;
+            int i = 0;
+            while(i != list.length() && !listFocused)
+            {
+                if(list[i]->hasFocus())
+                {
+                   listFocused = true;
+                   insert();
+                }
+                i++;
+            }
+        }
+    }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    //Open a dialog to notify the user that he didn't save the file
+    if(!fileSaved)
+    {
+        DialogSave *windowSave = new DialogSave(this);
+        int ret = windowSave->exec();
+        if(ret == QDialog::Rejected)
+        {
+            event->ignore();
+        }
+    }
+    settings.setValue("userGeometry", this->saveGeometry());
+}
+
+void MainWindow::setSettings(QString fileName)
+{
+    //Save a list the five last documents opened on this computer
+    QStringList recentFiles = QStringList();
+    if(settings.contains("recentFiles"))
+    {
+        recentFiles = settings.value("recentFiles").toStringList();
+        if(recentFiles.length() == 5)
+        {
+            recentFiles.pop_back();
+        }
+    }
+    recentFiles.push_front(fileName);
+    settings.setValue("recentFiles", recentFiles);
+
+}
+
+void MainWindow::updateMenuRecentFiles()
+{
+    if(settings.contains("recentFiles"))
+    {
+        menuRecentFiles->clear();
+        QList<QAction*>recentFiles = QList<QAction*>();
+        for(int i = 0; i < settings.value("recentFiles").toStringList().length(); i++)
+        {
+            QAction* a = new QAction(this);
+            a->setText(settings.value("recentFiles").toStringList().at(i));
+            QObject::connect(a, SIGNAL(triggered()), this, SLOT(openRecent()));
+            recentFiles.append(a);
+        }
+        menuRecentFiles->addActions(recentFiles);
+        ui->actionRecent_files->setMenu(menuRecentFiles);
+    }
+}
+
+QString MainWindow::getSettingsFile()
+{
+    return settings.fileName();
+}
+
+void MainWindow::updateTree()
+{
+    QStandardItemModel *modelUpdated = new QStandardItemModel();
+    int height = 0;
+    QList<int> *currentChild = new QList<int>();
+    QList<int> *nodesLength = new QList<int>();
+
+    heightXML(currentDocument->documentElement(), &height);
+    for(int i = 0; i < height-1; i++)
+    {
+        currentChild->append(0);
+        nodesLength->append(0);
+    }
+
+    buildTree(currentDocument->documentElement(), modelUpdated, new QStandardItem(currentDocument->documentElement().tagName()), nodesLength, 0, currentChild, -1);
+    setColumnLabels(modelUpdated);
+    model = modelUpdated;
+    treeView->setModel(model);
+    treeView->expandAll();
+    clearFormLayout();
+    fileSaved = false;
+    currentIndex = QModelIndex();
+    for(int i = 0; i < model->columnCount(); i++)
+    {
+        treeView->resizeColumnToContents(i);
+    }
 }
 
 //Slots
@@ -341,16 +554,15 @@ void MainWindow::showDetails(QModelIndex index)
 
     nodeName = model->itemFromIndex(index)->text();
     currentIndex = index;
-    ui->buttonAddParam->show();
-    ui->buttonValidate->show();
+    buttonAddParam->show();
+    buttonInsert->show();
 
     signalMapper = new QSignalMapper(this);
 
     //Clear formLayout to remove the parameter related to the last element selected
     clearFormLayout();
 
-    ui->label->setText("Edit " + nodeName);
-
+    label->setText("Edit " + nodeName);
     if(nodeName.compare(root) != 0)
     {
         //Store the list of attribute for the selected element
@@ -384,7 +596,7 @@ void MainWindow::showDetails(QModelIndex index)
             horizontalLayout->addWidget(list[0]);
             horizontalLayout->addWidget(list[1]);
             listLayout.push_front(horizontalLayout);
-            ui->formLayout->addRow(horizontalLayout);
+            formLayout->addRow(horizontalLayout);
         }
 
 
@@ -400,7 +612,7 @@ void MainWindow::showDetails(QModelIndex index)
             signalMapper->setMapping(listButton[0], listAttr[i]);
             horizontalLayout->addWidget(listButton[0]);
             listLayout.push_front(horizontalLayout);
-            ui->formLayout->addRow(horizontalLayout);
+            formLayout->addRow(horizontalLayout);
         }
         QObject::connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(deleteAttribute(QString)));
     }
@@ -408,25 +620,20 @@ void MainWindow::showDetails(QModelIndex index)
 
 void MainWindow::deleteAttribute(QString nameAttribute)
 {
-    QStandardItemModel *modelUpdated = new QStandardItemModel();
-    int height = 0;
-    QList<int> *currentChild = new QList<int>();
-    QList<int> *nodesLength = new QList<int>();
-
-    currentDocument->elementsByTagName(model->itemFromIndex(ui->treeView->currentIndex())->text()).item(0).toElement().removeAttribute(nameAttribute.trimmed());
-
-    heightXML(currentDocument->documentElement(), &height);
-    for(int i = 0; i < height-1; i++)
+    //the function elementsByTagName returns a list, so to get the good index in this list we need to count how many nodes
+    //have a tag different from the one which is selected
+    int countDiff = 0;
+    for(int i = 1; i <= treeView->currentIndex().row(); i++)
     {
-        currentChild->append(0);
-        nodesLength->append(0);
+        if(model->itemFromIndex(treeView->currentIndex().sibling(treeView->currentIndex().row()-i,0))->text() != model->itemFromIndex(treeView->currentIndex().sibling(treeView->currentIndex().row(),0))->text())
+        {
+            countDiff++;
+        }
     }
 
-    buildTree(currentDocument->documentElement(), modelUpdated, new QStandardItem(currentDocument->documentElement().tagName()), nodesLength, 0, currentChild, -1);
-    model = modelUpdated;
-    ui->treeView->setModel(model);
+    currentDocument->elementsByTagName(model->itemFromIndex(treeView->currentIndex().sibling(treeView->currentIndex().row(),0))->text()).item(treeView->currentIndex().row() - countDiff).toElement().removeAttribute(nameAttribute.trimmed());
 
-    clearFormLayout();
+    updateTree();
 }
 
 void MainWindow::addParam()
@@ -437,24 +644,31 @@ void MainWindow::addParam()
     list.push_front(new QLineEdit("Name"));
     horizontalLayout->addWidget(list[0]);
     horizontalLayout->addWidget(list[1]);
-    ui->formLayout->addRow(horizontalLayout);
+    formLayout->addRow(horizontalLayout);
 }
 
-void MainWindow::validate()
+void MainWindow::insert()
 {
     QString attrName, attrValue;
-    QStandardItemModel *modelUpdated = new QStandardItemModel;
-    QList<int> *currentChild = new QList<int>();
-    QList<int> *nodesLength = new QList<int>();
     QStringList *listAttr = new QStringList();
-    int height = 0;
     int ii = 0;
     QList<int> *indexToDelete = new QList<int>();
     bool indexToDeleteFound = false;
 
-    for(int i = 0; i < currentDocument->elementsByTagName(nodeName).item(0).attributes().length(); i++)
+    //the function elementsByTagName returns a list, so to get the good index in this list we need to count how many nodes
+    //have a tag different from the one which is selected
+    int countDiff = 0;
+    for(int i = 1; i <= treeView->currentIndex().row(); i++)
     {
-        listAttr->append(currentDocument->elementsByTagName(nodeName).item(0).attributes().item(i).toAttr().name().trimmed());
+        if(model->itemFromIndex(treeView->currentIndex().sibling(treeView->currentIndex().row()-i,0))->text() != model->itemFromIndex(treeView->currentIndex().sibling(treeView->currentIndex().row(),0))->text())
+        {
+            countDiff++;
+        }
+    }
+
+    for(int i = 0; i < currentDocument->elementsByTagName(nodeName).item(treeView->currentIndex().row() - countDiff).attributes().length(); i++)
+    {
+        listAttr->append(currentDocument->elementsByTagName(nodeName).item(treeView->currentIndex().row() - countDiff).attributes().item(i).toAttr().name().trimmed());
     }
 
     //If the name of existing attributes are modified, first we need to delete them from the document and add them with their new name
@@ -482,7 +696,7 @@ void MainWindow::validate()
     //delete the attributes if their name is modified
     for(int i = 0; i < indexToDelete->length(); i++)
     {
-        currentDocument->elementsByTagName(nodeName).item(0).toElement().removeAttribute(listAttr->at(indexToDelete->at(i)));
+        currentDocument->elementsByTagName(nodeName).item(treeView->currentIndex().row() - countDiff).toElement().removeAttribute(listAttr->at(indexToDelete->at(i)));
     }
 
     //add the attributes to the document
@@ -491,68 +705,72 @@ void MainWindow::validate()
         attrName = ((QLineEdit*)list[i])->text().trimmed();
         attrValue = ((QLineEdit*)list[i+1])->text().trimmed();
 
-        currentDocument->elementsByTagName(nodeName).item(0).toElement().setAttribute(attrName, attrValue);
+        currentDocument->elementsByTagName(nodeName).item(treeView->currentIndex().row() - countDiff).toElement().setAttribute(attrName, attrValue);
     }
 
-    //update the tree
-    heightXML(currentDocument->documentElement(), &height);
-    for(int i = 0; i < height-1; i++)
-    {
-        currentChild->append(0);
-        nodesLength->append(0);
-    }
-    buildTree(currentDocument->documentElement(), modelUpdated, new QStandardItem(currentDocument->documentElement().tagName()), nodesLength, 0, currentChild, -1);
-    model = modelUpdated;
-    ui->treeView->setModel(model);
-    clearFormLayout();
+    updateTree();
 }
 
 void MainWindow::openWindowAddNode()
 {
-    DialogAddNode *addNodeWindow;
-    QStringList *tagList = new QStringList;
-
-    if(!currentDocument->isNull())
+    if(modelIsSet)
     {
+        DialogAddNode *addNodeWindow;
+        QStringList *tagList = new QStringList;
+
         if(!currentDocument->documentElement().isNull())
         {
             getTagList(currentDocument->documentElement(), tagList);
         }
+
+        addNodeWindow = new DialogAddNode(tagList, this);
+        addNodeWindow->show();
     }
-    addNodeWindow = new DialogAddNode(tagList, this);
-    addNodeWindow->show();
 }
 
 void MainWindow::openWindowModifyNode()
 {
-    DialogModifyNode *modifyNodeWindow = new DialogModifyNode(this, model->itemFromIndex(ui->treeView->currentIndex())->text());
-    cout << model->itemFromIndex(ui->treeView->currentIndex())->text().toStdString() << endl;
-    modifyNodeWindow->show();
+    if(modelIsSet && currentIndex.isValid())
+    {
+        DialogModifyNode *modifyNodeWindow = new DialogModifyNode(this, model->itemFromIndex(treeView->currentIndex().sibling(treeView->currentIndex().row(), 0))->text());
+        modifyNodeWindow->show();
+    }
 }
 
 void MainWindow::deleteSelectedNode()
 {
-    QDomNode parent = currentDocument->elementsByTagName(model->itemFromIndex(ui->treeView->currentIndex().sibling(ui->treeView->currentIndex().row(), 0))->text()).item(0).parentNode();
-    QStandardItemModel *modelUpdated = new QStandardItemModel();
-    int height = 0;
-    QList<int> *currentChild = new QList<int>();
-    QList<int> *nodesLength = new QList<int>();
-
-    parent.removeChild(currentDocument->elementsByTagName(model->itemFromIndex(ui->treeView->currentIndex().sibling(ui->treeView->currentIndex().row(), 0))->text()).item(0));
-
-    heightXML(currentDocument->documentElement(), &height);
-    for(int i = 0; i < height-1; i++)
+    if(modelIsSet && currentIndex.isValid())
     {
-        currentChild->append(0);
-        nodesLength->append(0);
+        QDomNode parent = currentDocument->elementsByTagName(model->itemFromIndex(treeView->currentIndex().sibling(treeView->currentIndex().row(), 0))->parent()->text()).at(0);
+        parent.removeChild(parent.childNodes().item(treeView->currentIndex().row()));        
+        updateTree();
     }
-
-    buildTree(currentDocument->documentElement(), modelUpdated, new QStandardItem(currentDocument->documentElement().tagName()), nodesLength, 0, currentChild, -1);
-    model = modelUpdated;
-    ui->treeView->setModel(model);
 }
 
 void MainWindow::saveFile()
+{
+    FILE *saveFile;
+    QTextStream *fileStream;
+    QByteArray filenameFopen;
+
+    //convert Qstring to char* for the fopen function
+    filenameFopen = this->filename.toLocal8Bit();
+    saveFile = fopen(filenameFopen.data(), "w");
+
+    if(saveFile == NULL)
+    {
+        cout << "Erreur" << endl;
+    }
+    else
+    {
+        fileStream = new QTextStream(saveFile,QIODevice::ReadWrite);
+        currentDocument->save(*fileStream, 4);
+        fclose(saveFile);
+        fileSaved = true;
+    }
+}
+
+void MainWindow::saveFileAs()
 {
     QFileDialog *saveWindow = new QFileDialog(this);
     FILE *saveFile;
@@ -578,6 +796,7 @@ void MainWindow::saveFile()
             fileStream = new QTextStream(saveFile,QIODevice::ReadWrite);
             currentDocument->save(*fileStream, 4);
             fclose(saveFile);
+            fileSaved = true;
         }
     }
 
@@ -585,7 +804,31 @@ void MainWindow::saveFile()
 
 void MainWindow::executable()
 {
-    DialogExec *windowExec = new DialogExec(this, filename);
+    DialogExec *windowExec = new DialogExec(textResult, filename);
     windowExec->show();
 }
 
+void MainWindow::clearResult()
+{
+    textResult->clear();
+}
+
+void MainWindow::copyToClipboard()
+{
+    clipboard->setText(textResult->toPlainText());
+}
+
+void MainWindow::openRecent()
+{
+    openDatas(((QAction*)QObject::sender())->text());
+}
+
+void MainWindow::openWindowAddComment()
+{
+    if(modelIsSet && currentIndex.isValid())
+    {
+        DialogAddComment *windowAddComment = new DialogAddComment(model->itemFromIndex(treeView->currentIndex())->parent()->text(), treeView->currentIndex().row(), this);
+        windowAddComment->show();
+    }
+
+}
