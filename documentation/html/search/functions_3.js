@@ -2,6 +2,7 @@ var searchData=
 [
   ['deleteattribute',['deleteAttribute',['../classMainWindow.html#a7ead9d2b3de68f8ca35c3c4234c3316b',1,'MainWindow']]],
   ['deleteselectednode',['deleteSelectedNode',['../classMainWindow.html#aa0322653d852753a24a8974027c23f16',1,'MainWindow']]],
+  ['dialogabout',['DialogAbout',['../classDialogAbout.html#a190b23e7ee6baf399a1a026c1a400e53',1,'DialogAbout']]],
   ['dialogaddcomment',['DialogAddComment',['../classDialogAddComment.html#ad0cdceadc62c07e6fba1e0a2f2ab71eb',1,'DialogAddComment']]],
   ['dialogaddnode',['DialogAddNode',['../classDialogAddNode.html#a9f573b099436b835e4c660e81e361f75',1,'DialogAddNode']]],
   ['dialogexec',['DialogExec',['../classDialogExec.html#a9f886767450f6b4928186051b3b7273b',1,'DialogExec']]],
