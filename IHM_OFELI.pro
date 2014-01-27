@@ -23,16 +23,20 @@ SOURCES += main.cpp\
     dialogaddcomment.cpp \
     dialogabout.cpp
 
-HEADERS  += mainwindow.h\
+HEADERS  += mainwindow.h \
         ui_mainwindow.h \
     dialogexec.h \
     ui_dialogexec.h \
-    ui_dialogresults.h \
     dialogaddnode.h \
+    ui_dialogaddnode.h \
     dialogmodifynode.h \
+    ui_dialogmodifynode.h \
     dialogsave.h \
+    ui_dialogsave.h \
     dialogaddcomment.h \
-    dialogabout.h
+    ui_dialogaddcomment.h \
+    dialogabout.h \
+    ui_dialogabout.h
 FORMS    += mainwindow.ui \
     dialogexec.ui \
     dialogaddnode.ui \

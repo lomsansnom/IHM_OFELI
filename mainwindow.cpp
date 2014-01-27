@@ -137,14 +137,14 @@ void MainWindow::openDatas(QString filename)
     buildTree(elem, model, new QStandardItem(elem.tagName()), nodesLength, 0, currentChild, -1);
 
     //Modify the columns' headers
-    //setColumnLabels(model);
+    setColumnLabels(model);
 
     this->model = model;
     this->modelIsSet = true;
 
     //set the to the tree
-    /*treeView->setModel(model);
-    treeView->expandAll();
+    treeView->setModel(model);
+    /*treeView->expandAll();
     for(int i = 0; i < model->columnCount(); i++)
     {
         treeView->resizeColumnToContents(i);
@@ -161,7 +161,6 @@ void MainWindow::buildTree(QDomNode doc, QStandardItemModel* model, QStandardIte
     //check if doc is not empty
     if(!doc.isNull())
     {
-        cout << doc.toElement().tagName().toStdString() << endl;
         QStandardItem *itemUpdated = item;
         int nbAttributes = 0;
         nbAttributesMax(doc, &nbAttributes);
@@ -518,7 +517,6 @@ void MainWindow::updateTree()
         currentChild->append(0);
         nodesLength->append(0);
     }
-    cout << currentDocument->elementsByTagName("Project").at(0).childNodes().at(0).toElement().tagName().toStdString() << endl;
     buildTree(currentDocument->documentElement(), modelUpdated, new QStandardItem(currentDocument->documentElement().tagName()), nodesLength, 0, currentChild, -1);
     setColumnLabels(modelUpdated);
     model = modelUpdated;
