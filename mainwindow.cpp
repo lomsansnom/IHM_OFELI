@@ -144,15 +144,15 @@ void MainWindow::openDatas(QString filename)
 
     //set the to the tree
     treeView->setModel(model);
-    /*treeView->expandAll();
+    treeView->expandAll();
     for(int i = 0; i < model->columnCount(); i++)
     {
         treeView->resizeColumnToContents(i);
-    }*/
+    }
 
     //Store the filename for the menu "Recent files"
-    /*setSettings(filename);
-    updateMenuRecentFiles();*/
+    setSettings(filename);
+    updateMenuRecentFiles();
     QObject::connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(showDetails(QModelIndex)));
 }
 
