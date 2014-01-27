@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     dialogaddnode.cpp \
     dialogmodifynode.cpp \
     dialogsave.cpp \
-    dialogaddcomment.cpp
+    dialogaddcomment.cpp \
+    dialogabout.cpp
 
 HEADERS  += mainwindow.h\
         ui_mainwindow.h \
@@ -30,13 +31,15 @@ HEADERS  += mainwindow.h\
     dialogaddnode.h \
     dialogmodifynode.h \
     dialogsave.h \
-    dialogaddcomment.h
+    dialogaddcomment.h \
+    dialogabout.h
 FORMS    += mainwindow.ui \
     dialogexec.ui \
     dialogaddnode.ui \
     dialogmodifynode.ui \
     dialogsave.ui \
-    dialogaddcomment.ui
+    dialogaddcomment.ui \
+    dialogabout.ui
 
 RC_FILE = IHM_OFELI.rc
 ICON = icon.icns

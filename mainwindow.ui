@@ -43,7 +43,7 @@
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionA_propos"/>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFichier"/>
    <addaction name="menuEdition"/>
@@ -67,7 +67,7 @@
    <addaction name="actionDelete_selected_node"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionA_propos">
+  <action name="actionAbout">
    <property name="text">
     <string>About</string>
    </property>

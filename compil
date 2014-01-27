@@ -1,3 +1,2 @@
-rm *.o moc_* ui_*
-qmake -o ~/git/IHM_OFELI/Makefile ~/git/IHM_OFELI/IHM_OFELI.pro
+qmake -o Makefile IHM_OFELI.pro
 make

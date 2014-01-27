@@ -5,6 +5,7 @@
 #include "dialogsave.h"
 #include "ui_mainwindow.h"
 #include "dialogaddcomment.h"
+#include "dialogabout.h"
 
 using namespace std;
 
@@ -95,6 +96,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(buttonClear, SIGNAL(clicked()), this, SLOT(clearResult()));
     QObject::connect(buttonCopy, SIGNAL(clicked()), this, SLOT(copyToClipboard()));
     QObject::connect(ui->actionAdd_Comment, SIGNAL(triggered()), this, SLOT(openWindowAddComment()));
+    QObject::connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(openWindowAbout()));
 }
 
 MainWindow::~MainWindow()
@@ -135,22 +137,22 @@ void MainWindow::openDatas(QString filename)
     buildTree(elem, model, new QStandardItem(elem.tagName()), nodesLength, 0, currentChild, -1);
 
     //Modify the columns' headers
-    setColumnLabels(model);
+    //setColumnLabels(model);
 
     this->model = model;
     this->modelIsSet = true;
 
     //set the to the tree
-    treeView->setModel(model);
+    /*treeView->setModel(model);
     treeView->expandAll();
     for(int i = 0; i < model->columnCount(); i++)
     {
         treeView->resizeColumnToContents(i);
-    }
+    }*/
 
     //Store the filename for the menu "Recent files"
-    setSettings(filename);
-    updateMenuRecentFiles();
+    /*setSettings(filename);
+    updateMenuRecentFiles();*/
     QObject::connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(showDetails(QModelIndex)));
 }
 
@@ -159,6 +161,7 @@ void MainWindow::buildTree(QDomNode doc, QStandardItemModel* model, QStandardIte
     //check if doc is not empty
     if(!doc.isNull())
     {
+        cout << doc.toElement().tagName().toStdString() << endl;
         QStandardItem *itemUpdated = item;
         int nbAttributes = 0;
         nbAttributesMax(doc, &nbAttributes);
@@ -185,7 +188,6 @@ void MainWindow::buildTree(QDomNode doc, QStandardItemModel* model, QStandardIte
                     itemUpdated = itemUpdated->child(currentChild->at(i));
                 }
                 addColumnModel(model, doc);
-
                 getTagAttributes(&list, doc);
 
                 //append the list
@@ -344,8 +346,13 @@ void MainWindow::getTagList(QDomNode doc, QStringList *tagList)
 
 void MainWindow::addNode(QString nameParent, QString nameNode, QString textNode)
 {
-    currentDocument->elementsByTagName(nameParent).item(0).appendChild((new QDomDocument())->createElement(nameNode));
-    currentDocument->elementsByTagName(nameParent).item(0).lastChild().appendChild((new QDomDocument())->createTextNode(textNode));
+    QDomElement newNode = (new QDomDocument())->createElement(nameNode);
+    newNode.setTagName(nameNode);
+    currentDocument->elementsByTagName(nameParent).item(0).appendChild(newNode);
+    if(textNode.trimmed() != "")
+    {
+        currentDocument->elementsByTagName(nameParent).item(0).lastChild().appendChild((new QDomDocument())->createTextNode(textNode));
+    }
 
     updateTree();
 }
@@ -511,7 +518,7 @@ void MainWindow::updateTree()
         currentChild->append(0);
         nodesLength->append(0);
     }
-
+    cout << currentDocument->elementsByTagName("Project").at(0).childNodes().at(0).toElement().tagName().toStdString() << endl;
     buildTree(currentDocument->documentElement(), modelUpdated, new QStandardItem(currentDocument->documentElement().tagName()), nodesLength, 0, currentChild, -1);
     setColumnLabels(modelUpdated);
     model = modelUpdated;
@@ -831,4 +838,10 @@ void MainWindow::openWindowAddComment()
         windowAddComment->show();
     }
 
+}
+
+void MainWindow::openWindowAbout()
+{
+    DialogAbout *windowAbout = new DialogAbout();
+    windowAbout->show();
 }

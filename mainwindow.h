@@ -213,6 +213,10 @@ class MainWindow : public QMainWindow
          * \brief Opens a dialog to add a new comment to the tree (and the document).
          */
         void openWindowAddComment();
+        /*!
+         * \brief Opens the dialog "about".
+         */
+        void openWindowAbout();
 
     private:
         Ui::MainWindow *ui;
