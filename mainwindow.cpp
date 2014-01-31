@@ -132,14 +132,16 @@ void MainWindow::openDatas(QString filename)
         currentChild->append(0);
         nodesLength->append(0);
     }
-
+    QStandardItem *item = new QStandardItem(elem.tagName());
+    item->setFlags(item->flags() & ~Qt::ItemIsEditable);
     //build the model and use it to be displayed using a QTreeView
-    buildTree(elem, model, new QStandardItem(elem.tagName()), nodesLength, 0, currentChild, -1);
+    buildTree(elem, model, item, nodesLength, 0, currentChild, -1);
 
     //Modify the columns' headers
     setColumnLabels(model);
 
     this->model = model;
+
     this->modelIsSet = true;
 
     //set the to the tree
@@ -171,7 +173,9 @@ void MainWindow::buildTree(QDomNode doc, QStandardItemModel* model, QStandardIte
             list.append(item);
             for(int i = 0; i < nbAttributes; i++)
             {
-                list.append(new QStandardItem(""));
+                QStandardItem *newItem = new QStandardItem("");
+                newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
+                list.append(newItem);
             }
             model->appendRow(list);
         }
@@ -198,7 +202,9 @@ void MainWindow::buildTree(QDomNode doc, QStandardItemModel* model, QStandardIte
                 {
                     itemUpdated = itemUpdated->child(currentChild->at(i));
                 }
-                itemUpdated->appendRow(new QStandardItem("(Comment) " + doc.nodeValue()));
+                QStandardItem *newItem = new QStandardItem("(Comment) " + doc.nodeValue());
+                newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
+                itemUpdated->appendRow(newItem);
             }
         }
         //if the node has at least one child get all the children and add them to the model
@@ -242,22 +248,30 @@ void MainWindow::buildTree(QDomNode doc, QStandardItemModel* model, QStandardIte
 void MainWindow::getTagAttributes(QList<QStandardItem*> *list, QDomNode doc)
 {
     //add the tag's name in the list
-    list->append(new QStandardItem(doc.toElement().tagName()));
+    QStandardItem *newItem = new QStandardItem(doc.toElement().tagName());
+    newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
+    list->append(newItem);
 
     //if the node doesn't have any children, it means there is a value inside the node, we add this value in the list here
     if((!doc.childNodes().item(0).isElement() && doc.hasChildNodes()) && !doc.childNodes().item(0).isComment())
     {
-        list->append(new QStandardItem(doc.toElement().text()));
+        newItem = new QStandardItem(doc.toElement().text());
+        newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
+        list->append(newItem);
     }
     //if the node have at least one child, there is no value inside the node so we just had an empty string to the list
     else
     {
-        list->append(new QStandardItem(""));
+        newItem = new QStandardItem("");
+        newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
+        list->append(newItem);
     }
     //add all the attributes to the list
     for(int i = 0; i < doc.attributes().length(); i++)
     {
-        list->append(new QStandardItem(doc.attributes().item(i).toAttr().name() + " : " + doc.attributes().item(i).toAttr().value()));
+        newItem = new QStandardItem(doc.attributes().item(i).toAttr().name() + " : " + doc.attributes().item(i).toAttr().value());
+        newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
+        list->append(newItem);
     }
 }
 

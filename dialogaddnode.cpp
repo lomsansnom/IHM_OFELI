@@ -52,7 +52,6 @@ DialogAddNode::DialogAddNode(QStringList* parentList, MainWindow *parent) :
     nodeNameList->append("Nodes");
     nodeNameList->append("Elements");
     nodeNameList->append("Sides");
-    nodeNameList->append("Material");
 
     nodeNameList->append("Variable");
     nodeNameList->append("Data");
